@@ -135,7 +135,7 @@ html, body, [class*="css"] {
 .watermark {
     position: fixed;
     bottom: 16px;
-    right: 24px;
+    left: 24px; /* Dipindahkan ke kiri bawah */
     color: #475569;
     font-size: 0.75rem;
     font-weight: 700;
@@ -169,9 +169,9 @@ def check_password():
     title  = "Access Denied" if failed else "GSB Authentication"
     note   = "Invalid credentials." if failed else "Enter password to access the dashboard."
 
-    # Memuat logo menjadi Base64
+    # Memuat logo menjadi Base64 (max-height diperbesar menjadi 120px)
     logo_b64 = get_base64_image("logo gsb.png")
-    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 60px; margin-bottom: 24px; display: block; margin-left: auto; margin-right: auto;">' if logo_b64 else ''
+    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 120px; margin-bottom: 24px; display: block; margin-left: auto; margin-right: auto;">' if logo_b64 else ''
 
     st.markdown(
         f'<div style="max-width:400px;margin:80px auto;background:#1E293B;border:1px solid #334155;border-radius:12px;'
