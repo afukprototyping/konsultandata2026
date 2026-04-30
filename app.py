@@ -30,30 +30,53 @@ if not check_password():
     st.stop()
 
 # 2. Koneksi ke Google Sheets
-@st.cache_data(ttl=600) # Cache data selama 10 menit agar tidak kelebihan limit API
+@st.cache_data(ttl=600)
 def load_data():
-    # Menarik kredensial dari Streamlit Secrets
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
     client = gspread.authorize(creds)
     
-    # Buka Spreadsheet berdasarkan URL atau ID (Ganti URL di bawah ini)
     sheet_sps1 = client.open_by_url(st.secrets["URL_SPS1"]).sheet1
     sheet_sps2 = client.open_by_url(st.secrets["URL_SPS2"]).sheet1
     
-    # Ekstraksi ke Pandas DataFrame
     df_sps1 = pd.DataFrame(sheet_sps1.get_all_records())
     df_sps2 = pd.DataFrame(sheet_sps2.get_all_records())
     
-    # Pra-pemrosesan Data SPS 2 (Pemotongan baris historis)
-    # get_all_records otomatis menjadikan baris 1 sebagai header. 
-    # Baris 2 di spreadsheet adalah index 0 di DataFrame. Baris 26 adalah index 24.
+    # Memotong 24 baris pertama (data historis tahun lalu)
     df_sps2 = df_sps2.iloc[24:].copy()
     
-    # Pra-pemrosesan Kolom Identitas dan Keuntungan
-    # Asumsi nama kolom: 'ID Klien' dan 'Nominal Keuntungan'
-    df_sps2['ID Klien'] = df_sps2['ID Klien'].astype(str).str.replace(r'\.0$', '', regex=True).str.zfill(3)
-    df_sps2['Nominal Keuntungan'] = pd.to_numeric(df_sps2['Nominal Keuntungan'], errors='coerce').fillna(0)
+    # Pembersihan spasi atau enter tak kasatmata pada nama kolom (mencegah KeyError)
+    df_sps1.columns = df_sps1.columns.str.strip()
+    df_sps2.columns = df_sps2.columns.str.strip()
+    
+    # Definisi Nama Kolom Absolut
+    # Jika ada karakter Enter (Alt+Enter) di spreadsheet, Pandas membacanya sebagai \n
+    NAMA_KOLOM_NOMINAL = "Nominal yang diberikan"
+    NAMA_KOLOM_ID = "ID Klien (26.XXX)\nisi 3 angka belakang saja"
+    NAMA_KOLOM_LAYANAN = "Layanan yang diinginkan"
+    
+    # Verifikasi dan fallback jika format nama kolom sedikit berbeda di Sheets
+    if NAMA_KOLOM_ID not in df_sps2.columns:
+        # Mencari kolom yang mengandung kata "ID Klien" jika nama persis tidak ditemukan
+        for col in df_sps2.columns:
+            if "ID Klien" in str(col):
+                NAMA_KOLOM_ID = col
+                break
+                
+    if NAMA_KOLOM_NOMINAL not in df_sps2.columns:
+        for col in df_sps2.columns:
+            if "Nominal yang diberikan" in str(col):
+                NAMA_KOLOM_NOMINAL = col
+                break
+
+    # Standardisasi ID Klien dan Nominal Keuntungan
+    df_sps2[NAMA_KOLOM_ID] = df_sps2[NAMA_KOLOM_ID].astype(str).str.replace(r'\.0$', '', regex=True).str.zfill(3)
+    df_sps2[NAMA_KOLOM_NOMINAL] = pd.to_numeric(df_sps2[NAMA_KOLOM_NOMINAL], errors='coerce').fillna(0)
+    
+    # Menyimpan variabel nama kolom ke session state
+    st.session_state['col_id'] = NAMA_KOLOM_ID
+    st.session_state['col_nom'] = NAMA_KOLOM_NOMINAL
+    st.session_state['col_layanan'] = NAMA_KOLOM_LAYANAN
     
     return df_sps1, df_sps2
 
@@ -62,7 +85,7 @@ st.title("Dashboard Pelacakan KPI & Administrasi Konsultan Data")
 try:
     df_sps1, df_sps2 = load_data()
 except Exception as e:
-    st.error(f"Gagal memuat data dari Google Sheets: {e}")
+    st.error(f"Gagal memuat data dari Google Sheets. Detail Error: {e}")
     st.stop()
 
 # 3. Kalkulasi Metrik Utama
@@ -72,7 +95,7 @@ total_incoming = len(df_sps1)
 total_finished = len(df_sps2)
 total_pending = total_incoming - total_finished
 
-total_profit_sps2 = df_sps2['Nominal Keuntungan'].sum()
+total_profit_sps2 = df_sps2[st.session_state['col_nom']].sum()
 total_kpi_profit = total_profit_sps2 + (total_incoming * 50000)
 
 col1, col2, col3, col4 = st.columns(4)
@@ -85,8 +108,16 @@ st.divider()
 
 # 4. Persebaran Layanan
 st.header("2. Distribusi Layanan Klien")
-if 'Layanan yang diinginkan' in df_sps1.columns:
-    service_dist = df_sps1['Layanan yang diinginkan'].value_counts().reset_index()
+# Pengecekan kolom layanan
+col_layanan_aktual = st.session_state['col_layanan']
+if col_layanan_aktual not in df_sps1.columns:
+    for col in df_sps1.columns:
+        if "Layanan" in str(col):
+            col_layanan_aktual = col
+            break
+
+if col_layanan_aktual in df_sps1.columns:
+    service_dist = df_sps1[col_layanan_aktual].value_counts().reset_index()
     service_dist.columns = ['Jenis Layanan', 'Jumlah']
     
     col_a, col_b = st.columns([1, 2])
@@ -95,14 +126,14 @@ if 'Layanan yang diinginkan' in df_sps1.columns:
     with col_b:
         st.bar_chart(service_dist.set_index('Jenis Layanan'))
 else:
-    st.warning("Nama kolom layanan pada SPS 1 tidak sesuai. Pastikan bernama 'Layanan yang diinginkan'.")
+    st.warning("Kolom Layanan tidak ditemukan pada SPS 1.")
 
 st.divider()
 
 # 5. Kalkulasi Pajak Dinamis Berdasarkan Agregasi ID
 st.header("3. Kalkulasi Pajak GSB per Klien")
 
-profit_per_client = df_sps2.groupby('ID Klien')['Nominal Keuntungan'].sum().reset_index()
+profit_per_client = df_sps2.groupby(st.session_state['col_id'])[st.session_state['col_nom']].sum().reset_index()
 
 def calculate_tax(amount):
     if amount < 150000:
@@ -112,10 +143,10 @@ def calculate_tax(amount):
     else:
         return amount * 0.12
 
-profit_per_client['Pajak GSB'] = profit_per_client['Nominal Keuntungan'].apply(calculate_tax)
+profit_per_client['Pajak GSB'] = profit_per_client[st.session_state['col_nom']].apply(calculate_tax)
 
 # Pemformatan mata uang
-profit_per_client['Nominal Keuntungan'] = profit_per_client['Nominal Keuntungan'].apply(lambda x: f"Rp {x:,.0f}")
+profit_per_client[st.session_state['col_nom']] = profit_per_client[st.session_state['col_nom']].apply(lambda x: f"Rp {x:,.0f}")
 profit_per_client['Pajak GSB'] = profit_per_client['Pajak GSB'].apply(lambda x: f"Rp {x:,.0f}")
 
 st.dataframe(profit_per_client, use_container_width=True)
