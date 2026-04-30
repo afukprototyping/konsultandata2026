@@ -3,6 +3,8 @@ import pandas as pd
 import gspread
 import plotly.express as px
 from google.oauth2.service_account import Credentials
+import base64
+import os
 
 st.set_page_config(
     page_title="GSB Admin Dashboard",
@@ -10,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# Dark Mode & Modern Minimalist CSS
+# 1. CSS Injection: Dark Mode, UI Elements & Watermark
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -115,7 +117,7 @@ html, body, [class*="css"] {
     color: #F87171;
 }
 
-/* Financial Cards (Tax Section) */
+/* Financial Cards */
 .fin-card {
     border-radius: 10px;
     padding: 20px;
@@ -123,15 +125,36 @@ html, body, [class*="css"] {
     background: #1E293B;
 }
 
-/* Streamlit Overrides for Dark Mode */
+/* Streamlit Overrides */
 .stDataFrame {
     border: 1px solid #334155 !important;
     border-radius: 8px !important;
 }
+
+/* Watermark Styling */
+.watermark {
+    position: fixed;
+    bottom: 16px;
+    right: 24px;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    z-index: 9999;
+    pointer-events: none;
+    user-select: none;
+}
 </style>
 """, unsafe_allow_html=True)
 
+# 2. Fungsi Pembantu untuk Gambar Lokal
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return None
 
+# 3. Sistem Autentikasi dengan Logo
 def check_password():
     def _submit():
         st.session_state["auth_ok"] = (
@@ -146,9 +169,14 @@ def check_password():
     title  = "Access Denied" if failed else "GSB Authentication"
     note   = "Invalid credentials." if failed else "Enter password to access the dashboard."
 
+    # Memuat logo menjadi Base64
+    logo_b64 = get_base64_image("logo gsb.png")
+    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 60px; margin-bottom: 24px; display: block; margin-left: auto; margin-right: auto;">' if logo_b64 else ''
+
     st.markdown(
         f'<div style="max-width:400px;margin:80px auto;background:#1E293B;border:1px solid #334155;border-radius:12px;'
         f'padding:40px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.3);text-align:center;">'
+        f'{img_html}'
         f'<h2 style="margin:0 0 8px;font-weight:800;font-size:1.5rem;color:#F8FAFC;">{title}</h2>'
         f'<p style="margin:0 0 24px;color:#94A3B8;font-size:0.875rem;">{note}</p>'
         f'</div>',
@@ -200,7 +228,7 @@ def load_data():
     df2[col_id]  = df2[col_id].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(3)
     df2[col_nom] = pd.to_numeric(df2[col_nom], errors="coerce").fillna(0)
 
-    # Standardize ID Klien from SPS 1 (Kolom Baru)
+    # Standardize ID Klien from SPS 1
     col_id_sps1 = _find_col(df1, "ID Klien", "ID Klien")
     if not col_id_sps1:
         raise ValueError(f"Critical column 'ID Klien' not found in SPS1. Columns: {list(df1.columns)}")
@@ -313,7 +341,6 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ---------------------------------------------------------
 st.markdown('<div class="section-title">2. Tax Liability Summary</div>', unsafe_allow_html=True)
 
-# Accumulation Cards (Moved ABOVE the table)
 t1, t2, t3 = st.columns(3)
 with t1:
     st.markdown(f"""
@@ -339,7 +366,6 @@ with t3:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Tax Table formatting
 display_pajak = pajak_df.copy()
 for col in ["Gross Accumulation", "Tax Liability", "Net Revenue"]:
     display_pajak[col] = display_pajak[col].apply(lambda x: f"Rp {x:,.0f}")
@@ -361,7 +387,6 @@ if COL_LAYANAN and COL_LAYANAN in df_incoming.columns:
     with col_a:
         st.dataframe(service_dist, use_container_width=True, hide_index=True)
     with col_b:
-        # Plotly Donut Chart optimized for Dark Mode
         fig = px.pie(service_dist, values='Number of Clients', names='Service Type', hole=0.45)
         fig.update_traces(textposition='inside', textinfo='percent+label')
         fig.update_layout(
@@ -383,14 +408,12 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ---------------------------------------------------------
 st.markdown('<div class="section-title">4. Unrecorded / Pending Clients</div>', unsafe_allow_html=True)
 
-# Tracking Logic: Filter out IDs that already exist in the completed dataframe
 completed_ids = df_completed[COL_ID].tolist()
 pending_df = df_incoming[~df_incoming['Generated_ID'].isin(completed_ids)].copy()
 
 if pending_df.empty:
-    st.success("🎉 All incoming clients have been successfully processed and recorded!")
+    st.success("All incoming clients have been successfully processed and recorded.")
 else:
-    # Determine columns to display
     display_cols = ['Generated_ID']
     if COL_NAMA and COL_NAMA in pending_df.columns:
         display_cols.append(COL_NAMA)
@@ -399,3 +422,7 @@ else:
     
     clean_pending_df = pending_df[display_cols].rename(columns={'Generated_ID': 'Client ID'})
     st.dataframe(clean_pending_df, use_container_width=True, hide_index=True)
+
+
+# Eksekusi Watermark
+st.markdown('<div class="watermark">powered by etmingantenk2026_afiq</div>', unsafe_allow_html=True)
