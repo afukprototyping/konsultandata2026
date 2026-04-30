@@ -5,155 +5,130 @@ from google.oauth2.service_account import Credentials
 
 st.set_page_config(
     page_title="Dashboard Administrasi GSB",
-    page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-# Google Fonts dipisah dari style block agar tidak mengganggu parser
-st.markdown(
-    '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans'
-    ':wght@400;500;600;700;800&display=swap" rel="stylesheet">',
-    unsafe_allow_html=True,
-)
-
-# PENTING: tidak ada komentar /* */ di dalam <style>
-# Tanda * di komentar CSS dibaca Streamlit sebagai sintaks bold markdown
-# sehingga seluruh blok <style> bocor sebagai teks biasa
+# Injeksi CSS Modern & Minimalis
 st.markdown("""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 .stApp {
-    background: #F2F1ED;
+    background-color: #F8FAFC;
 }
 #MainMenu, footer, header {
     visibility: hidden;
 }
 .block-container {
-    padding-top: 24px !important;
-    padding-bottom: 40px !important;
-    max-width: 1260px !important;
+    padding-top: 2rem !important;
+    padding-bottom: 3rem !important;
+    max-width: 1200px !important;
 }
-.gsb-header {
-    background: linear-gradient(135deg, #C0392B 0%, #E8500A 50%, #F0892A 100%);
-    border-radius: 16px;
-    padding: 32px 38px;
-    margin-bottom: 20px;
+
+/* Header Styling */
+.header-container {
+    background-color: #0F172A;
+    border-radius: 12px;
+    padding: 32px 40px;
+    margin-bottom: 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 8px 28px rgba(192,57,43,0.30);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-.gsb-header h1 {
-    color: white !important;
-    font-size: 1.85rem !important;
-    font-weight: 800 !important;
-    margin: 0 0 3px 0 !important;
-    letter-spacing: -0.4px;
+.header-title {
+    color: #FFFFFF;
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.025em;
 }
-.gsb-header p {
-    color: rgba(255,255,255,0.78) !important;
-    font-size: 0.87rem !important;
-    margin: 0 !important;
+.header-subtitle {
+    color: #94A3B8;
+    font-size: 0.875rem;
+    margin: 0;
+    font-weight: 500;
 }
-.gsb-header-kpi {
+.header-kpi-label {
+    color: #94A3B8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: right;
+    margin-bottom: 4px;
+}
+.header-kpi-value {
+    color: #38BDF8;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
     text-align: right;
 }
-.gsb-header-kpi .kpi-label {
-    color: rgba(255,255,255,0.70);
-    font-size: 0.72rem;
+
+/* Section Styling */
+.section-title {
+    font-size: 1rem;
     font-weight: 700;
-    letter-spacing: 1.3px;
-    text-transform: uppercase;
-}
-.gsb-header-kpi .kpi-value {
-    color: white;
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.8px;
-    line-height: 1.15;
-}
-.gsb-section {
-    background: white;
-    border-radius: 14px;
-    padding: 24px 28px 28px;
+    color: #334155;
     margin-bottom: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.04);
+    padding-bottom: 8px;
+    border-bottom: 2px solid #E2E8F0;
 }
-.gsb-section-label {
-    font-size: 0.69rem;
+
+/* Metric Cards HTML */
+.custom-metric-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+.cmc-label {
+    color: #64748B;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 1.8px;
     text-transform: uppercase;
-    color: #BDBDBD;
-    padding-bottom: 12px;
-    margin-bottom: 18px;
-    border-bottom: 1px solid #F0EDE8;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
 }
-.metric-card {
-    background: #FAFAF8;
-    border: 1px solid #EBEBEA;
-    border-radius: 12px;
-    padding: 18px 20px 14px;
-    position: relative;
-    overflow: hidden;
+.cmc-value {
+    color: #0F172A;
+    font-size: 1.875rem;
+    font-weight: 800;
+    line-height: 1.2;
 }
-.metric-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #E8500A, #F0892A);
-    border-radius: 12px 12px 0 0;
+.cmc-caption {
+    color: #94A3B8;
+    font-size: 0.75rem;
+    margin-top: 8px;
+    font-weight: 500;
 }
-.metric-card.warn::after {
-    background: linear-gradient(90deg, #C0392B, #E8500A);
+.cmc-value.warning {
+    color: #EF4444;
 }
-.mc-label {
-    font-size: 0.70rem;
-    font-weight: 700;
-    color: #C0BEBB;
-    text-transform: uppercase;
-    letter-spacing: 0.9px;
-    margin-bottom: 2px;
-}
+
+/* Alert/Banner Styling */
 .info-banner {
-    background: #FFFBF4;
-    border: 1px solid #FFE0B2;
-    border-radius: 9px;
-    padding: 11px 15px;
-    font-size: 0.81rem;
-    color: #7A4A10;
-    line-height: 1.55;
-    margin-bottom: 14px;
+    background-color: #EFF6FF;
+    border-left: 4px solid #3B82F6;
+    padding: 16px;
+    border-radius: 6px;
+    color: #1E3A8A;
+    font-size: 0.875rem;
+    margin-bottom: 20px;
 }
-div[data-testid="stMetricValue"] {
-    font-size: 1.65rem !important;
-    font-weight: 800 !important;
-    color: #1A1A1A !important;
-    letter-spacing: -0.5px !important;
-}
-div[data-testid="stMetricLabel"] {
-    display: none !important;
-}
+
+/* Streamlit Overrides */
 .stDataFrame {
-    border-radius: 10px !important;
-    border: 1px solid #EBEBEA !important;
-}
-.stAlert {
-    border-radius: 10px !important;
-}
-.stTextInput input {
+    border: 1px solid #E2E8F0 !important;
     border-radius: 8px !important;
-    border: 1.5px solid #E0DDD9 !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-}
-.stTextInput input:focus {
-    border-color: #E8500A !important;
-    box-shadow: 0 0 0 3px rgba(232,80,10,0.10) !important;
+    overflow: hidden !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -170,26 +145,25 @@ def check_password():
         return True
 
     failed = st.session_state.get("auth_ok") is False
-    icon   = "🔒" if failed else "📊"
-    title  = "Akses Ditolak" if failed else "Dashboard GSB"
-    note   = "Password salah. Silakan coba lagi." if failed else "Masukkan password untuk melanjutkan."
+    title  = "Akses Ditolak" if failed else "Autentikasi GSB"
+    note   = "Kredensial tidak valid. Silakan coba lagi." if failed else "Masukkan kata sandi untuk mengakses dasbor."
 
     st.markdown(
-        f'<div style="max-width:380px;margin:72px auto;background:white;border-radius:16px;'
-        f'padding:36px;box-shadow:0 6px 28px rgba(0,0,0,0.09);text-align:center;">'
-        f'<div style="width:52px;height:52px;background:linear-gradient(135deg,#C0392B,#F0892A);'
-        f'border-radius:13px;margin:0 auto 16px;font-size:1.4rem;line-height:52px;">{icon}</div>'
-        f'<h2 style="margin:0 0 6px;font-weight:800;font-size:1.4rem;color:#1A1A1A;">{title}</h2>'
-        f'<p style="margin:0;color:#AAA;font-size:0.86rem;">{note}</p>'
+        f'<div style="max-width:400px;margin:80px auto;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;'
+        f'padding:40px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);text-align:center;">'
+        f'<h2 style="margin:0 0 8px;font-weight:800;font-size:1.5rem;color:#0F172A;">{title}</h2>'
+        f'<p style="margin:0 0 24px;color:#64748B;font-size:0.875rem;">{note}</p>'
         f'</div>',
         unsafe_allow_html=True,
     )
-    _, mid, _ = st.columns([1, 2, 1])
+    
+    _, mid, _ = st.columns([1, 1.5, 1])
     with mid:
+        # Form input diletakkan sedikit di atas menggunakan margin negatif ringan khusus untuk input
+        st.markdown('<div style="margin-top:-75px;"></div>', unsafe_allow_html=True)
         st.text_input("pw", type="password", on_change=_submit, key="_pw",
-                      label_visibility="collapsed", placeholder="Masukkan password…")
+                      label_visibility="collapsed", placeholder="Kata Sandi...")
     return False
-
 
 if not check_password():
     st.stop()
@@ -266,83 +240,89 @@ akum_pajak   = pajak_df["Pajak GSB"].sum()
 akum_net     = pajak_df["Net (Nominal - Pajak)"].sum()
 
 
-# HEADER — hanya teks statis di dalam HTML
-st.markdown("""
-<div class="gsb-header">
+# HEADER UTAMA
+st.markdown(f"""
+<div class="header-container">
     <div>
-        <h1>Dashboard Administrasi GSB</h1>
-        <p>Department of Data Analytics &nbsp;&middot;&nbsp; KPI &amp; Pelacakan Klien</p>
+        <h1 class="header-title">Dasbor Administrasi GSB</h1>
+        <p class="header-subtitle">Departemen Data Analytics &middot; Pelacakan KPI & Klien</p>
     </div>
-    <div class="gsb-header-kpi">
-        <div class="kpi-label">Total KPI</div>
+    <div>
+        <div class="header-kpi-label">Estimasi Valuasi KPI</div>
+        <div class="header-kpi-value">Rp {total_kpi:,.0f}</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-_, col_kpi = st.columns([3, 1])
-with col_kpi:
-    st.markdown(
-        f'<div style="text-align:right;margin-top:-68px;padding-right:4px;'
-        f'font-size:1.55rem;font-weight:800;color:white;letter-spacing:-0.5px;">'
-        f'Rp {total_kpi:,.0f}</div>',
-        unsafe_allow_html=True,
-    )
 
+# SECTION 1: Tinjauan Eksekutif
+st.markdown('<div class="section-title">1. Tinjauan Eksekutif</div>', unsafe_allow_html=True)
 
-# SECTION 1
-st.markdown('<div class="gsb-section"><div class="gsb-section-label">1. Tinjauan Eksekutif</div>', unsafe_allow_html=True)
-
-c1, c2, c3, c4 = st.columns(4, gap="small")
+c1, c2, c3, c4 = st.columns(4)
 
 with c1:
-    st.markdown('<div class="metric-card"><div class="mc-label">Klien Masuk (SPS 1)</div></div>', unsafe_allow_html=True)
-    st.metric("a", total_masuk, label_visibility="collapsed")
+    st.markdown(f"""
+    <div class="custom-metric-card">
+        <div class="cmc-label">Klien Masuk (SPS 1)</div>
+        <div class="cmc-value">{total_masuk}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with c2:
-    st.markdown('<div class="metric-card"><div class="mc-label">Klien Selesai (SPS 2)</div></div>', unsafe_allow_html=True)
-    st.metric("b", total_selesai, label_visibility="collapsed")
+    st.markdown(f"""
+    <div class="custom-metric-card">
+        <div class="cmc-label">Klien Selesai (SPS 2)</div>
+        <div class="cmc-value">{total_selesai}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with c3:
-    cls = "metric-card warn" if total_pending < 0 else "metric-card"
-    st.markdown(f'<div class="{cls}"><div class="mc-label">Belum Terdata</div></div>', unsafe_allow_html=True)
-    st.metric("c", total_pending, label_visibility="collapsed")
-    if total_pending < 0:
-        st.caption("Kemungkinan duplikasi di SPS 2 atau penghapusan di SPS 1")
+    warning_class = "warning" if total_pending < 0 else ""
+    caption_html = '<div class="cmc-caption" style="color:#EF4444;">Anomali Data Terdeteksi</div>' if total_pending < 0 else ''
+    st.markdown(f"""
+    <div class="custom-metric-card">
+        <div class="cmc-label">Belum Terdata</div>
+        <div class="cmc-value {warning_class}">{total_pending}</div>
+        {caption_html}
+    </div>
+    """, unsafe_allow_html=True)
 
 with c4:
-    st.markdown('<div class="metric-card"><div class="mc-label">Pendapatan + Biaya Komitmen</div></div>', unsafe_allow_html=True)
-    st.metric("d", f"Rp {total_kpi:,.0f}", label_visibility="collapsed")
-    st.caption(
-        f"Rp {profit_sps2:,.0f} pendapatan + "
-        f"Rp {total_komitmen:,.0f} komitmen "
-        f"({total_masuk} x Rp {BIAYA_KOMITMEN:,.0f})"
-    )
+    st.markdown(f"""
+    <div class="custom-metric-card">
+        <div class="cmc-label">Pendapatan Total</div>
+        <div class="cmc-value" style="font-size:1.5rem;">Rp {profit_sps2:,.0f}</div>
+        <div class="cmc-caption">+ Rp {total_komitmen:,.0f} (Biaya Komitmen)</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 
-# SECTION 2
-st.markdown('<div class="gsb-section"><div class="gsb-section-label">2. Distribusi Layanan Klien (SPS 1)</div>', unsafe_allow_html=True)
+# SECTION 2: Distribusi Layanan
+st.markdown('<div class="section-title">2. Distribusi Layanan Klien (SPS 1)</div>', unsafe_allow_html=True)
 
 if COL_LAYANAN and COL_LAYANAN in df_sps1.columns:
     service_dist = df_sps1[COL_LAYANAN].value_counts().reset_index()
     service_dist.columns = ["Jenis Layanan", "Jumlah Klien"]
-    st.dataframe(service_dist, use_container_width=True, hide_index=True)
+    
+    col_a, col_b = st.columns([1, 2])
+    with col_a:
+        st.dataframe(service_dist, use_container_width=True, hide_index=True)
+    with col_b:
+        st.bar_chart(service_dist.set_index("Jenis Layanan"), color="#3B82F6")
 else:
-    st.warning("Kolom 'Layanan yang diinginkan' tidak ditemukan pada SPS 1.")
+    st.warning("Kolom Layanan tidak ditemukan pada basis data SPS 1.")
 
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 
-# SECTION 3
-st.markdown('<div class="gsb-section"><div class="gsb-section-label">3. Kalkulasi Pajak GSB per Klien</div>', unsafe_allow_html=True)
+# SECTION 3: Kalkulasi Pajak
+st.markdown('<div class="section-title">3. Rekapitulasi Kewajiban Pajak GSB</div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div class="info-banner">
-    <strong>Sistem Agregasi Anti-Avoidance:</strong>
-    Pajak dihitung dari total akumulasi per ID Klien, bukan per transaksi.
-    Klien yang membayar cicil atau menambah analisis tetap dikenakan pajak atas total
-    keseluruhan &mdash; mencegah penghindaran bracket pajak.
+    <strong>Protokol Agregasi Aktif:</strong> Pajak dihitung berdasarkan akumulasi identitas klien, bukan entri transaksi individual. Hal ini mencegah manipulasi margin pajak melalui pemecahan tagihan (split invoicing).
 </div>
 """, unsafe_allow_html=True)
 
@@ -352,20 +332,30 @@ for col in ["Total Nominal", "Pajak GSB", "Net (Nominal - Pajak)"]:
 
 st.dataframe(display_pajak, use_container_width=True, hide_index=True)
 
-st.markdown("<div style='margin-top:8px'></div>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-t1, t2, t3 = st.columns(3, gap="small")
+t1, t2, t3 = st.columns(3)
 
 with t1:
-    st.markdown('<div style="background:#FFF8F5;border:1px solid #EBEBEA;border-radius:10px;padding:14px 16px;"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#C0BEBB;margin-bottom:4px;">Total Nominal Seluruh Klien</div></div>', unsafe_allow_html=True)
-    st.metric("t1", f"Rp {akum_nominal:,.0f}", label_visibility="collapsed")
+    st.markdown(f"""
+    <div class="custom-metric-card" style="background:#F8FAFC;">
+        <div class="cmc-label">Akumulasi Bruto</div>
+        <div class="cmc-value" style="font-size:1.5rem;">Rp {akum_nominal:,.0f}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with t2:
-    st.markdown('<div style="background:#FFF2F2;border:1px solid #EBEBEA;border-radius:10px;padding:14px 16px;"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#C0BEBB;margin-bottom:4px;">Total Pajak GSB (Akumulasi)</div></div>', unsafe_allow_html=True)
-    st.metric("t2", f"Rp {akum_pajak:,.0f}", label_visibility="collapsed")
+    st.markdown(f"""
+    <div class="custom-metric-card" style="background:#FEF2F2; border-color:#FCA5A5;">
+        <div class="cmc-label" style="color:#DC2626;">Kewajiban Pajak</div>
+        <div class="cmc-value" style="font-size:1.5rem; color:#991B1B;">Rp {akum_pajak:,.0f}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with t3:
-    st.markdown('<div style="background:#F4FFF7;border:1px solid #EBEBEA;border-radius:10px;padding:14px 16px;"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#C0BEBB;margin-bottom:4px;">Net Diterima (setelah Pajak)</div></div>', unsafe_allow_html=True)
-    st.metric("t3", f"Rp {akum_net:,.0f}", label_visibility="collapsed")
-
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="custom-metric-card" style="background:#F0FDF4; border-color:#86EFAC;">
+        <div class="cmc-label" style="color:#16A34A;">Penerimaan Bersih</div>
+        <div class="cmc-value" style="font-size:1.5rem; color:#166534;">Rp {akum_net:,.0f}</div>
+    </div>
+    """, unsafe_allow_html=True)
