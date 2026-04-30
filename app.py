@@ -193,14 +193,14 @@ except Exception as e:
 # ─────────────────────────────────────────────
 # Kalkulasi Terpusat
 # ─────────────────────────────────────────────
-ADMIN_FEE = 50_000  # biaya administrasi per klien masuk
+BIAYA_KOMITMEN = 50_000  # dibayar di awal oleh klien, sebelum analisis dikerjakan
 
 total_masuk   = len(df_sps1)
 total_selesai = len(df_sps2)
 total_pending = total_masuk - total_selesai
 profit_sps2   = df_sps2[COL_NOM].sum()
-total_admin   = total_masuk * ADMIN_FEE
-total_kpi     = profit_sps2 + total_admin
+total_komitmen = total_masuk * BIAYA_KOMITMEN
+total_kpi      = profit_sps2 + total_komitmen
 
 
 def hitung_pajak(nominal: float) -> float:
@@ -245,7 +245,10 @@ st.markdown(f"""
 # ── SECTION 1 · Tinjauan Eksekutif ──
 # ─────────────────────────────────────────────
 pending_class = "warn" if total_pending < 0 else ""
-anomali_sub   = '<div class="m-sub">⚠️ Anomali data</div>' if total_pending < 0 else ""
+anomali_sub   = (
+    '<div class="m-sub">⚠️ Kemungkinan duplikasi di SPS 2 atau penghapusan di SPS 1</div>'
+    if total_pending < 0 else ""
+)
 
 st.markdown(f"""
 <div class="gsb-card">
@@ -265,11 +268,12 @@ st.markdown(f"""
             {anomali_sub}
         </div>
         <div class="metric-item">
-            <div class="m-label">Profit SPS 2 + Admin Fee</div>
-            <div class="m-value sm">
-                Rp {profit_sps2:,.0f}
-                <br><span style="font-size:.73rem;color:#BBB;font-weight:500">
-                    + Rp {total_admin:,.0f} admin ({total_masuk} × Rp {ADMIN_FEE:,.0f})
+            <div class="m-label">Total KPI (Pendapatan + Komitmen)</div>
+            <div class="m-value sm">Rp {total_kpi:,.0f}
+                <br><span style="font-size:.70rem;color:#BBB;font-weight:500">
+                    Rp {profit_sps2:,.0f} pendapatan
+                    &nbsp;+&nbsp;
+                    Rp {total_komitmen:,.0f} komitmen ({total_masuk}×Rp {BIAYA_KOMITMEN:,.0f})
                 </span>
             </div>
         </div>
@@ -302,7 +306,15 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ── SECTION 3 · Pajak GSB per Klien ──
 # ─────────────────────────────────────────────
 st.markdown('<div class="gsb-card">', unsafe_allow_html=True)
-st.markdown('<div class="section-label">3. Kalkulasi Pajak GSB per Klien</div>', unsafe_allow_html=True)
+st.markdown("""
+<div class="section-label">3. Kalkulasi Pajak GSB per Klien</div>
+<div style="background:#FFFBF5;border:1px solid #FFE0C0;border-radius:9px;padding:11px 16px;margin-bottom:16px;font-size:0.82rem;color:#7A4A10;line-height:1.55;">
+    <strong>Sistem Agregasi Anti-Avoidance:</strong>
+    Pajak dihitung dari <em>total akumulasi per ID Klien</em>, bukan per transaksi.
+    Klien yang membayar secara cicil atau menambah analisis (multi-baris) tetap dihitung
+    pajaknya atas total keseluruhan — mencegah penghindaran bracket pajak.
+</div>
+""", unsafe_allow_html=True)
 
 # Tabel rincian — format tampilan saja, data numerik di pajak_df tetap utuh
 display_pajak = pajak_df.copy()
