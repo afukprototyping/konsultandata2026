@@ -135,7 +135,7 @@ html, body, [class*="css"] {
 .watermark {
     position: fixed;
     bottom: 16px;
-    left: 24px; /* Dipindahkan ke kiri bawah */
+    left: 24px;
     color: #475569;
     font-size: 0.75rem;
     font-weight: 700;
@@ -147,14 +147,14 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-# 2. Fungsi Pembantu untuk Gambar Lokal
+# 2. Base64 Image Helper
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
     return None
 
-# 3. Sistem Autentikasi dengan Logo
+# 3. Authentication System
 def check_password():
     def _submit():
         st.session_state["auth_ok"] = (
@@ -169,7 +169,6 @@ def check_password():
     title  = "Access Denied" if failed else "GSB Authentication"
     note   = "Invalid credentials." if failed else "Enter password to access the dashboard."
 
-    # Memuat logo menjadi Base64 (max-height diperbesar menjadi 120px)
     logo_b64 = get_base64_image("logo gsb.png")
     img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 120px; margin-bottom: 24px; display: block; margin-left: auto; margin-right: auto;">' if logo_b64 else ''
 
@@ -220,26 +219,25 @@ def load_data():
     col_nom     = _find_col(df2, "Nominal yang diberikan", "Nominal")
     col_layanan = _find_col(df1, "Layanan yang diinginkan", "Layanan")
     col_nama    = _find_col(df1, "Nama Klien", "Nama")
+    col_konsul  = _find_col(df1, "Konsultan", "Konsultan")
 
     if not col_id or not col_nom:
         raise ValueError(f"Critical columns not found. SPS2 Columns: {list(df2.columns)}")
 
-    # Standardize ID and Nominal from SPS 2
     df2[col_id]  = df2[col_id].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(3)
     df2[col_nom] = pd.to_numeric(df2[col_nom], errors="coerce").fillna(0)
 
-    # Standardize ID Klien from SPS 1
     col_id_sps1 = _find_col(df1, "ID Klien", "ID Klien")
     if not col_id_sps1:
         raise ValueError(f"Critical column 'ID Klien' not found in SPS1. Columns: {list(df1.columns)}")
     
     df1['Generated_ID'] = df1[col_id_sps1].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(3)
 
-    return df1, df2, col_id, col_nom, col_layanan, col_nama
+    return df1, df2, col_id, col_nom, col_layanan, col_nama, col_konsul
 
 
 try:
-    df_incoming, df_completed, COL_ID, COL_NOM, COL_LAYANAN, COL_NAMA = load_data()
+    df_incoming, df_completed, COL_ID, COL_NOM, COL_LAYANAN, COL_NAMA, COL_KONSULTAN = load_data()
 except Exception as e:
     st.error(f"Failed to fetch data. Details: {e}")
     st.stop()
@@ -375,7 +373,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------
-# SECTION 3: CLIENT SERVICE DISTRIBUTION (PIE CHART)
+# SECTION 3: CLIENT SERVICE DISTRIBUTION
 # ---------------------------------------------------------
 st.markdown('<div class="section-title">3. Client Service Distribution</div>', unsafe_allow_html=True)
 
@@ -415,13 +413,68 @@ if pending_df.empty:
     st.success("All incoming clients have been successfully processed and recorded.")
 else:
     display_cols = ['Generated_ID']
+    rename_dict = {'Generated_ID': 'Client ID'}
+    
     if COL_NAMA and COL_NAMA in pending_df.columns:
         display_cols.append(COL_NAMA)
     if COL_LAYANAN and COL_LAYANAN in pending_df.columns:
         display_cols.append(COL_LAYANAN)
+    if COL_KONSULTAN and COL_KONSULTAN in pending_df.columns:
+        display_cols.append(COL_KONSULTAN)
+        rename_dict[COL_KONSULTAN] = 'Assigned Consultant'
     
-    clean_pending_df = pending_df[display_cols].rename(columns={'Generated_ID': 'Client ID'})
+    clean_pending_df = pending_df[display_cols].rename(columns=rename_dict)
     st.dataframe(clean_pending_df, use_container_width=True, hide_index=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+
+# ---------------------------------------------------------
+# SECTION 5: CONSULTANT WORKLOAD DISTRIBUTION
+# ---------------------------------------------------------
+st.markdown('<div class="section-title">5. Consultant Workload Distribution</div>', unsafe_allow_html=True)
+
+CONSULTANTS_LIST = [
+    "Helmi Falah", "Nyayu Azzahra Nabila", "Cut Ashifa Sawallida", "Retno Sari", 
+    "Rizky Arif Wicaksono", "Pascal Arya Nugroho", "Muhammad Khayruhanif", 
+    "Qanita Basimah Kurnia", "Afiq Dzakwan Anasti", "Azka Raditya Hafidz", 
+    "Cameliya Ulya Hidayah", "Intan Aisa", "Varel Geo Syah Putra", 
+    "Muhammad Shira Pramudita", "Nabeel Muhammad Diaz"
+]
+
+consultant_df = pd.DataFrame({"Consultant": CONSULTANTS_LIST, "Clients Handled": 0})
+
+if COL_KONSULTAN and COL_KONSULTAN in df_incoming.columns:
+    # Mengamankan string untuk pencocokan yang akurat
+    actual_counts = df_incoming[COL_KONSULTAN].astype(str).str.strip().value_counts().reset_index()
+    actual_counts.columns = ["Consultant", "Count"]
+
+    for idx, row in consultant_df.iterrows():
+        match = actual_counts[actual_counts['Consultant'].str.lower() == row['Consultant'].lower()]
+        if not match.empty:
+            consultant_df.at[idx, 'Clients Handled'] = match['Count'].values[0]
+
+    # Pengurutan descending
+    consultant_df = consultant_df.sort_values(by="Clients Handled", ascending=False).reset_index(drop=True)
+
+    c_table, c_chart = st.columns([1.2, 2])
+    with c_table:
+        st.dataframe(consultant_df, use_container_width=True, hide_index=True)
+    with c_chart:
+        fig2 = px.bar(consultant_df, x='Clients Handled', y='Consultant', orientation='h')
+        fig2.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#F8FAFC'),
+            yaxis={'categoryorder':'total ascending'},
+            margin=dict(t=0, b=0, l=0, r=0),
+            xaxis_title="Total Clients",
+            yaxis_title=""
+        )
+        fig2.update_traces(marker_color='#38BDF8')
+        st.plotly_chart(fig2, use_container_width=True)
+else:
+    st.warning("Consultant column not found in incoming database.")
 
 
 # Eksekusi Watermark
