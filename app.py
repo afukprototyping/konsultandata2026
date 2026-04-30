@@ -196,12 +196,16 @@ def load_data():
     if not col_id or not col_nom:
         raise ValueError(f"Critical columns not found. SPS2 Columns: {list(df2.columns)}")
 
-    # Standardize ID and Nominal
+    # Standardize ID and Nominal from SPS 2
     df2[col_id]  = df2[col_id].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(3)
     df2[col_nom] = pd.to_numeric(df2[col_nom], errors="coerce").fillna(0)
 
-    # Generate Expected IDs for Incoming Clients based on row index (1 becomes 001, 2 becomes 002, etc.)
-    df1['Generated_ID'] = (df1.index + 1).astype(str).str.zfill(3)
+    # Standardize ID Klien from SPS 1 (Kolom Baru)
+    col_id_sps1 = _find_col(df1, "ID Klien", "ID Klien")
+    if not col_id_sps1:
+        raise ValueError(f"Critical column 'ID Klien' not found in SPS1. Columns: {list(df1.columns)}")
+    
+    df1['Generated_ID'] = df1[col_id_sps1].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(3)
 
     return df1, df2, col_id, col_nom, col_layanan, col_nama
 
@@ -393,5 +397,5 @@ else:
     if COL_LAYANAN and COL_LAYANAN in pending_df.columns:
         display_cols.append(COL_LAYANAN)
     
-    clean_pending_df = pending_df[display_cols].rename(columns={'Generated_ID': 'Assigned ID'})
+    clean_pending_df = pending_df[display_cols].rename(columns={'Generated_ID': 'Client ID'})
     st.dataframe(clean_pending_df, use_container_width=True, hide_index=True)
