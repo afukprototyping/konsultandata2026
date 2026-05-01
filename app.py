@@ -35,39 +35,60 @@ st.markdown("""
     max-width: 1360px !important;
 }
 
-/* Header Kompak */
+/* Header Utama: Gradient Orange GSB */
 .header-container {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 8px;
-    padding: 16px 24px;
-    margin-bottom: 16px;
+    background: linear-gradient(135deg, #F97316 0%, #EA580C 50%, #C2410C 100%);
+    border-radius: 10px;
+    padding: 16px 28px;
+    margin-bottom: 20px;
     display: flex;
     justify-content: flex-start; /* Justify Kiri */
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25);
 }
 .header-title {
-    color: #1E3A8A !important;
-    font-size: 1.5rem !important;
+    color: #FFFFFF !important; /* Putih */
+    font-size: 1.6rem !important;
     font-weight: 800 !important;
     margin: 0 0 2px 0 !important;
     letter-spacing: -0.02em !important;
 }
 .header-subtitle {
-    color: #64748B !important;
+    color: #1E3A8A !important; /* Biru Navy */
     font-size: 0.85rem !important;
     margin: 0 !important;
-    font-weight: 600 !important;
+    font-weight: 800 !important;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 /* Pemisah Vertikal untuk Total Value */
 .header-divider {
     height: 48px;
     width: 2px;
-    background-color: #E2E8F0;
+    background-color: rgba(255, 255, 255, 0.3);
     margin: 0 32px;
+}
+
+/* Label & Nominal di Header */
+.header-kpi-label {
+    color: #F8FAFC !important; /* Putih Terang */
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 2px !important;
+}
+.header-kpi-value {
+    /* Teks Gradient Biru GSB */
+    background: linear-gradient(135deg, #0F172A 0%, #1D4ED8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 
 /* Kotak Metrik Super Padat */
@@ -264,7 +285,7 @@ accum_net   = pajak_df["Net Revenue"].sum()
 
 # -- Header Terpusat Kiri --
 logo_b64_header = get_base64_image("logo gsb.png")
-img_header = f'<img src="data:image/png;base64,{logo_b64_header}" style="height: 44px; margin-right: 16px;">' if logo_b64_header else ''
+img_header = f'<img src="data:image/png;base64,{logo_b64_header}" style="height: 48px; margin-right: 16px;">' if logo_b64_header else ''
 
 st.markdown(f"""
 <div class="header-container">
@@ -277,8 +298,8 @@ st.markdown(f"""
     </div>
     <div class="header-divider"></div>
     <div>
-        <div class="metric-label">Total Estimated Value</div>
-        <div class="metric-value" style="color: #E8500A; font-size: 1.85rem;">Rp {total_valuation:,.0f}</div>
+        <div class="header-kpi-label">Total Estimated Value</div>
+        <div class="header-kpi-value">Rp {total_valuation:,.0f}</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -301,18 +322,13 @@ with m5:
 st.markdown("<div style='margin-top: 24px;'></div>", unsafe_allow_html=True)
 
 # -- Tabel 3 Kolom Berdampingan --
+# Mengubah porsi lebar agar tabel yang detail mendapat ruang yang pas
 col_left, col_mid, col_right = st.columns([1, 1, 1.5], gap="medium")
 
-with col_left:
-    st.markdown('<div class="mini-header">Service Distribution</div>', unsafe_allow_html=True)
-    if COL_LAYANAN and COL_LAYANAN in df_incoming.columns:
-        service_dist = df_incoming[COL_LAYANAN].value_counts().reset_index()
-        service_dist.columns = ["Service Type", "Qty"]
-        st.dataframe(service_dist, use_container_width=True, hide_index=True)
-    else:
-        st.warning("N/A")
+# Variabel tinggi tabel (Height 230 memastikan hanya ~5 baris yang tampil, sisanya harus di-scroll)
+TABLE_HEIGHT = 230
 
-with col_mid:
+with col_left:
     st.markdown('<div class="mini-header">Consultant Workload</div>', unsafe_allow_html=True)
     CONSULTANTS_LIST = [
         "Helmi Falah", "Nyayu Azzahra Nabila", "Cut Ashifa Sawallida", "Retno Sari", 
@@ -329,7 +345,16 @@ with col_mid:
             match = actual_counts[actual_counts['Consultant'].str.lower() == row['Consultant'].lower()]
             if not match.empty: consultant_df.at[idx, 'Handled'] = match['Count'].values[0]
         consultant_df = consultant_df.sort_values(by="Handled", ascending=False).reset_index(drop=True)
-        st.dataframe(consultant_df, use_container_width=True, hide_index=True)
+        st.dataframe(consultant_df, use_container_width=True, hide_index=True, height=TABLE_HEIGHT)
+    else:
+        st.warning("N/A")
+
+with col_mid:
+    st.markdown('<div class="mini-header">Service Distribution</div>', unsafe_allow_html=True)
+    if COL_LAYANAN and COL_LAYANAN in df_incoming.columns:
+        service_dist = df_incoming[COL_LAYANAN].value_counts().reset_index()
+        service_dist.columns = ["Service Type", "Qty"]
+        st.dataframe(service_dist, use_container_width=True, hide_index=True, height=TABLE_HEIGHT)
     else:
         st.warning("N/A")
 
@@ -353,4 +378,4 @@ with col_right:
             rename_dict[COL_KONSULTAN] = 'Consultant'
         
         clean_pending_df = pending_df[display_cols].rename(columns=rename_dict)
-        st.dataframe(clean_pending_df, use_container_width=True, hide_index=True)
+        st.dataframe(clean_pending_df, use_container_width=True, hide_index=True, height=TABLE_HEIGHT)
