@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# 1. CSS Injection: Dark Mode, UI Elements & Watermark
+# 1. CSS Injection: Dark Mode, UI Elements & Right Menu Styling
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -131,18 +131,12 @@ html, body, [class*="css"] {
     border-radius: 8px !important;
 }
 
-/* Watermark Styling */
-.watermark {
-    position: fixed;
-    bottom: 16px;
-    left: 24px;
-    color: #475569;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    z-index: 9999;
-    pointer-events: none;
-    user-select: none;
+/* Radio Button Menu Styling */
+div.row-widget.stRadio > div {
+    background: #1E293B;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid #334155;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -215,6 +209,7 @@ def load_data():
     df1.columns = df1.columns.str.strip()
     df2.columns = df2.columns.str.strip()
 
+    # Searching for the actual Indonesian headers in the raw database
     col_id      = _find_col(df2, "ID Klien (26.XXX)\nisi 3 angka belakang saja", "ID Klien")
     col_nom     = _find_col(df2, "Nominal yang diberikan", "Nominal")
     col_layanan = _find_col(df1, "Layanan yang diinginkan", "Layanan")
@@ -274,7 +269,7 @@ accum_net   = pajak_df["Net Revenue"].sum()
 
 
 # ---------------------------------------------------------
-# HEADER SECTION
+# HEADER SECTION (Always visible)
 # ---------------------------------------------------------
 st.markdown(f"""
 <div class="header-container">
@@ -291,191 +286,183 @@ st.markdown(f"""
 
 
 # ---------------------------------------------------------
-# SECTION 1: EXECUTIVE SUMMARY
+# LAYOUT STRUCTURE: Main Content (Left) + Menu (Right)
 # ---------------------------------------------------------
-st.markdown('<div class="section-title">1. Executive Summary</div>', unsafe_allow_html=True)
+content_col, menu_col = st.columns([3.5, 1], gap="large")
 
-c1, c2, c3, c4 = st.columns(4)
+with menu_col:
+    st.markdown('<div class="section-title">Navigation Menu</div>', unsafe_allow_html=True)
+    selected_view = st.radio(
+        "Select View:",
+        ["Executive Summary", "Tax Liability", "Service Distribution", "Pending Clients", "Consultant Workload"],
+        label_visibility="collapsed"
+    )
 
-with c1:
-    st.markdown(f"""
-    <div class="custom-metric-card">
-        <div class="cmc-label">Incoming Clients</div>
-        <div class="cmc-value">{total_incoming}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c2:
-    st.markdown(f"""
-    <div class="custom-metric-card">
-        <div class="cmc-label">Completed Clients</div>
-        <div class="cmc-value">{total_completed}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c3:
-    warning_class = "warning" if total_pending < 0 else ""
-    st.markdown(f"""
-    <div class="custom-metric-card">
-        <div class="cmc-label">Pending Clients</div>
-        <div class="cmc-value {warning_class}">{total_pending}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c4:
-    st.markdown(f"""
-    <div class="custom-metric-card">
-        <div class="cmc-label">Base Revenue</div>
-        <div class="cmc-value" style="font-size:1.5rem;">Rp {profit_completed:,.0f}</div>
-        <div class="cmc-caption">+ Rp {total_commitment:,.0f} (Commitment Fees)</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-
-# ---------------------------------------------------------
-# SECTION 2: TAX LIABILITY
-# ---------------------------------------------------------
-st.markdown('<div class="section-title">2. Tax Liability Summary</div>', unsafe_allow_html=True)
-
-t1, t2, t3 = st.columns(3)
-with t1:
-    st.markdown(f"""
-    <div class="fin-card">
-        <div class="cmc-label">Total Gross Accumulation</div>
-        <div class="cmc-value" style="font-size:1.5rem; color:#F8FAFC;">Rp {accum_gross:,.0f}</div>
-    </div>
-    """, unsafe_allow_html=True)
-with t2:
-    st.markdown(f"""
-    <div class="fin-card" style="border-color:#7F1D1D; background:#450A0A;">
-        <div class="cmc-label" style="color:#FCA5A5;">Total Tax Liability</div>
-        <div class="cmc-value" style="font-size:1.5rem; color:#F87171;">Rp {accum_tax:,.0f}</div>
-    </div>
-    """, unsafe_allow_html=True)
-with t3:
-    st.markdown(f"""
-    <div class="fin-card" style="border-color:#14532D; background:#052E16;">
-        <div class="cmc-label" style="color:#86EFAC;">Total Net Revenue</div>
-        <div class="cmc-value" style="font-size:1.5rem; color:#4ADE80;">Rp {accum_net:,.0f}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-display_pajak = pajak_df.copy()
-for col in ["Gross Accumulation", "Tax Liability", "Net Revenue"]:
-    display_pajak[col] = display_pajak[col].apply(lambda x: f"Rp {x:,.0f}")
-
-st.dataframe(display_pajak, use_container_width=True, hide_index=True)
-st.markdown("<br>", unsafe_allow_html=True)
-
-
-# ---------------------------------------------------------
-# SECTION 3: CLIENT SERVICE DISTRIBUTION
-# ---------------------------------------------------------
-st.markdown('<div class="section-title">3. Client Service Distribution</div>', unsafe_allow_html=True)
-
-if COL_LAYANAN and COL_LAYANAN in df_incoming.columns:
-    service_dist = df_incoming[COL_LAYANAN].value_counts().reset_index()
-    service_dist.columns = ["Service Type", "Number of Clients"]
+with content_col:
     
-    col_a, col_b = st.columns([1.2, 2])
-    with col_a:
-        st.dataframe(service_dist, use_container_width=True, hide_index=True)
-    with col_b:
-        fig = px.pie(service_dist, values='Number of Clients', names='Service Type', hole=0.45)
-        fig.update_traces(textposition='inside', textinfo='percent+label')
-        fig.update_layout(
-            paper_bgcolor='rgba(0,0,0,0)', 
-            plot_bgcolor='rgba(0,0,0,0)', 
-            font=dict(color='#F8FAFC'),
-            margin=dict(t=0, b=0, l=0, r=0),
-            showlegend=False
-        )
-        st.plotly_chart(fig, use_container_width=True)
-else:
-    st.warning("Service column not found in incoming database.")
+    # --- VIEW 1: EXECUTIVE SUMMARY ---
+    if selected_view == "Executive Summary":
+        st.markdown('<div class="section-title">Executive Summary</div>', unsafe_allow_html=True)
+        
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown(f"""
+            <div class="custom-metric-card" style="margin-bottom: 16px;">
+                <div class="cmc-label">Incoming Clients</div>
+                <div class="cmc-value">{total_incoming}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            warning_class = "warning" if total_pending < 0 else ""
+            st.markdown(f"""
+            <div class="custom-metric-card">
+                <div class="cmc-label">Pending Clients</div>
+                <div class="cmc-value {warning_class}">{total_pending}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        with c2:
+            st.markdown(f"""
+            <div class="custom-metric-card" style="margin-bottom: 16px;">
+                <div class="cmc-label">Completed Clients</div>
+                <div class="cmc-value">{total_completed}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown(f"""
+            <div class="custom-metric-card">
+                <div class="cmc-label">Base Revenue</div>
+                <div class="cmc-value" style="font-size:1.5rem;">Rp {profit_completed:,.0f}</div>
+                <div class="cmc-caption">+ Rp {total_commitment:,.0f} (Commitment Fees)</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+    # --- VIEW 2: TAX LIABILITY ---
+    elif selected_view == "Tax Liability":
+        st.markdown('<div class="section-title">Tax Liability Summary</div>', unsafe_allow_html=True)
+        
+        t1, t2, t3 = st.columns(3)
+        with t1:
+            st.markdown(f"""
+            <div class="fin-card">
+                <div class="cmc-label">Total Gross Accumulation</div>
+                <div class="cmc-value" style="font-size:1.5rem; color:#F8FAFC;">Rp {accum_gross:,.0f}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with t2:
+            st.markdown(f"""
+            <div class="fin-card" style="border-color:#7F1D1D; background:#450A0A;">
+                <div class="cmc-label" style="color:#FCA5A5;">Total Tax Liability</div>
+                <div class="cmc-value" style="font-size:1.5rem; color:#F87171;">Rp {accum_tax:,.0f}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with t3:
+            st.markdown(f"""
+            <div class="fin-card" style="border-color:#14532D; background:#052E16;">
+                <div class="cmc-label" style="color:#86EFAC;">Total Net Revenue</div>
+                <div class="cmc-value" style="font-size:1.5rem; color:#4ADE80;">Rp {accum_net:,.0f}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
+        st.markdown("<br>", unsafe_allow_html=True)
 
-# ---------------------------------------------------------
-# SECTION 4: PENDING CLIENTS TRACKER
-# ---------------------------------------------------------
-st.markdown('<div class="section-title">4. Unrecorded / Pending Clients</div>', unsafe_allow_html=True)
+        display_pajak = pajak_df.copy()
+        for col in ["Gross Accumulation", "Tax Liability", "Net Revenue"]:
+            display_pajak[col] = display_pajak[col].apply(lambda x: f"Rp {x:,.0f}")
 
-completed_ids = df_completed[COL_ID].tolist()
-pending_df = df_incoming[~df_incoming['Generated_ID'].isin(completed_ids)].copy()
+        st.dataframe(display_pajak, use_container_width=True, hide_index=True)
 
-if pending_df.empty:
-    st.success("All incoming clients have been successfully processed and recorded.")
-else:
-    display_cols = ['Generated_ID']
-    rename_dict = {'Generated_ID': 'Client ID'}
-    
-    if COL_NAMA and COL_NAMA in pending_df.columns:
-        display_cols.append(COL_NAMA)
-    if COL_LAYANAN and COL_LAYANAN in pending_df.columns:
-        display_cols.append(COL_LAYANAN)
-    if COL_KONSULTAN and COL_KONSULTAN in pending_df.columns:
-        display_cols.append(COL_KONSULTAN)
-        rename_dict[COL_KONSULTAN] = 'Assigned Consultant'
-    
-    clean_pending_df = pending_df[display_cols].rename(columns=rename_dict)
-    st.dataframe(clean_pending_df, use_container_width=True, hide_index=True)
+    # --- VIEW 3: SERVICE DISTRIBUTION ---
+    elif selected_view == "Service Distribution":
+        st.markdown('<div class="section-title">Client Service Distribution</div>', unsafe_allow_html=True)
+        
+        if COL_LAYANAN and COL_LAYANAN in df_incoming.columns:
+            service_dist = df_incoming[COL_LAYANAN].value_counts().reset_index()
+            service_dist.columns = ["Service Type", "Number of Clients"]
+            
+            col_a, col_b = st.columns([1, 1.5])
+            with col_a:
+                st.dataframe(service_dist, use_container_width=True, hide_index=True)
+            with col_b:
+                fig = px.pie(service_dist, values='Number of Clients', names='Service Type', hole=0.45)
+                fig.update_traces(textposition='inside', textinfo='percent+label')
+                fig.update_layout(
+                    paper_bgcolor='rgba(0,0,0,0)', 
+                    plot_bgcolor='rgba(0,0,0,0)', 
+                    font=dict(color='#F8FAFC'),
+                    margin=dict(t=0, b=0, l=0, r=0),
+                    showlegend=False
+                )
+                st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.warning("Service column not found in incoming database.")
 
-st.markdown("<br>", unsafe_allow_html=True)
+    # --- VIEW 4: PENDING CLIENTS ---
+    elif selected_view == "Pending Clients":
+        st.markdown('<div class="section-title">Unrecorded / Pending Clients</div>', unsafe_allow_html=True)
+        
+        completed_ids = df_completed[COL_ID].tolist()
+        pending_df = df_incoming[~df_incoming['Generated_ID'].isin(completed_ids)].copy()
 
+        if pending_df.empty:
+            st.success("All incoming clients have been successfully processed and recorded.")
+        else:
+            display_cols = ['Generated_ID']
+            rename_dict = {'Generated_ID': 'Client ID'}
+            
+            if COL_NAMA and COL_NAMA in pending_df.columns:
+                display_cols.append(COL_NAMA)
+                rename_dict[COL_NAMA] = 'Client Name'
+            if COL_LAYANAN and COL_LAYANAN in pending_df.columns:
+                display_cols.append(COL_LAYANAN)
+                rename_dict[COL_LAYANAN] = 'Service Type'
+            if COL_KONSULTAN and COL_KONSULTAN in pending_df.columns:
+                display_cols.append(COL_KONSULTAN)
+                rename_dict[COL_KONSULTAN] = 'Assigned Consultant'
+            
+            clean_pending_df = pending_df[display_cols].rename(columns=rename_dict)
+            st.dataframe(clean_pending_df, use_container_width=True, hide_index=True)
 
-# ---------------------------------------------------------
-# SECTION 5: CONSULTANT WORKLOAD DISTRIBUTION
-# ---------------------------------------------------------
-st.markdown('<div class="section-title">5. Consultant Workload Distribution</div>', unsafe_allow_html=True)
+    # --- VIEW 5: CONSULTANT WORKLOAD ---
+    elif selected_view == "Consultant Workload":
+        st.markdown('<div class="section-title">Consultant Workload Distribution</div>', unsafe_allow_html=True)
+        
+        CONSULTANTS_LIST = [
+            "Helmi Falah", "Nyayu Azzahra Nabila", "Cut Ashifa Sawallida", "Retno Sari", 
+            "Rizky Arif Wicaksono", "Pascal Arya Nugroho", "Muhammad Khayruhanif", 
+            "Qanita Basimah Kurnia", "Afiq Dzakwan Anasti", "Azka Raditya Hafidz", 
+            "Cameliya Ulya Hidayah", "Intan Aisa", "Varel Geo Syah Putra", 
+            "Muhammad Shira Pramudita", "Nabeel Muhammad Diaz"
+        ]
 
-CONSULTANTS_LIST = [
-    "Helmi Falah", "Nyayu Azzahra Nabila", "Cut Ashifa Sawallida", "Retno Sari", 
-    "Rizky Arif Wicaksono", "Pascal Arya Nugroho", "Muhammad Khayruhanif", 
-    "Qanita Basimah Kurnia", "Afiq Dzakwan Anasti", "Azka Raditya Hafidz", 
-    "Cameliya Ulya Hidayah", "Intan Aisa", "Varel Geo Syah Putra", 
-    "Muhammad Shira Pramudita", "Nabeel Muhammad Diaz"
-]
+        consultant_df = pd.DataFrame({"Consultant": CONSULTANTS_LIST, "Clients Handled": 0})
 
-consultant_df = pd.DataFrame({"Consultant": CONSULTANTS_LIST, "Clients Handled": 0})
+        if COL_KONSULTAN and COL_KONSULTAN in df_incoming.columns:
+            actual_counts = df_incoming[COL_KONSULTAN].astype(str).str.strip().value_counts().reset_index()
+            actual_counts.columns = ["Consultant", "Count"]
 
-if COL_KONSULTAN and COL_KONSULTAN in df_incoming.columns:
-    # Mengamankan string untuk pencocokan yang akurat
-    actual_counts = df_incoming[COL_KONSULTAN].astype(str).str.strip().value_counts().reset_index()
-    actual_counts.columns = ["Consultant", "Count"]
+            for idx, row in consultant_df.iterrows():
+                match = actual_counts[actual_counts['Consultant'].str.lower() == row['Consultant'].lower()]
+                if not match.empty:
+                    consultant_df.at[idx, 'Clients Handled'] = match['Count'].values[0]
 
-    for idx, row in consultant_df.iterrows():
-        match = actual_counts[actual_counts['Consultant'].str.lower() == row['Consultant'].lower()]
-        if not match.empty:
-            consultant_df.at[idx, 'Clients Handled'] = match['Count'].values[0]
+            consultant_df = consultant_df.sort_values(by="Clients Handled", ascending=False).reset_index(drop=True)
 
-    # Pengurutan descending
-    consultant_df = consultant_df.sort_values(by="Clients Handled", ascending=False).reset_index(drop=True)
-
-    c_table, c_chart = st.columns([1.2, 2])
-    with c_table:
-        st.dataframe(consultant_df, use_container_width=True, hide_index=True)
-    with c_chart:
-        fig2 = px.bar(consultant_df, x='Clients Handled', y='Consultant', orientation='h')
-        fig2.update_layout(
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='#F8FAFC'),
-            yaxis={'categoryorder':'total ascending'},
-            margin=dict(t=0, b=0, l=0, r=0),
-            xaxis_title="Total Clients",
-            yaxis_title=""
-        )
-        fig2.update_traces(marker_color='#38BDF8')
-        st.plotly_chart(fig2, use_container_width=True)
-else:
-    st.warning("Consultant column not found in incoming database.")
-
-
-# Eksekusi Watermark
-st.markdown('<div class="watermark">powered by etmingantenk2026_afiq</div>', unsafe_allow_html=True)
+            c_table, c_chart = st.columns([1.2, 2])
+            with c_table:
+                st.dataframe(consultant_df, use_container_width=True, hide_index=True)
+            with c_chart:
+                fig2 = px.bar(consultant_df, x='Clients Handled', y='Consultant', orientation='h')
+                fig2.update_layout(
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='#F8FAFC'),
+                    yaxis={'categoryorder':'total ascending'},
+                    margin=dict(t=0, b=0, l=0, r=0),
+                    xaxis_title="Total Clients",
+                    yaxis_title=""
+                )
+                fig2.update_traces(marker_color='#38BDF8')
+                st.plotly_chart(fig2, use_container_width=True)
+        else:
+            st.warning("Consultant column not found in incoming database.")
