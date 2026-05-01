@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # ==========================================
-# 1. CSS INJECTION (ULTRA-COMPACT, GSB BRANDING)
+# 1. CSS INJECTION (LIQUID GLASS + GSB BRANDING)
 # ==========================================
 st.markdown("""
 <style>
@@ -22,8 +22,17 @@ st.markdown("""
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-.stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+/* Base App Background - Liquid Glass Effect (Subtle Orange & Blue Gradient) */
+.stApp {
     background-color: #F8FAFC !important;
+    background-image: 
+        radial-gradient(circle at 10% 10%, rgba(232, 80, 10, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(30, 58, 138, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 0%, transparent 100%) !important;
+    background-attachment: fixed !important;
+}
+[data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+    background: transparent !important;
 }
 
 #MainMenu, footer, header { visibility: hidden; }
@@ -38,41 +47,48 @@ st.markdown("""
 /* Header Utama: Gradient Orange GSB */
 .header-container {
     background: linear-gradient(135deg, #F97316 0%, #EA580C 50%, #C2410C 100%);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 16px 28px;
     margin-bottom: 20px;
     display: flex;
-    justify-content: flex-start; /* Justify Kiri */
+    justify-content: flex-start;
     align-items: center;
-    box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25);
+    box-shadow: 0 8px 24px rgba(234, 88, 12, 0.2);
+}
+.header-text-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .header-title {
-    color: #FFFFFF !important; /* Putih */
+    color: #FFFFFF !important;
     font-size: 1.6rem !important;
     font-weight: 800 !important;
-    margin: 0 0 2px 0 !important;
+    margin: 0 0 -2px 0 !important; /* Menarik title lebih dekat ke subtitle */
     letter-spacing: -0.02em !important;
+    line-height: 1.1 !important;
 }
 .header-subtitle {
-    color: #1E3A8A !important; /* Biru Navy */
+    color: #1E3A8A !important;
     font-size: 0.85rem !important;
     margin: 0 !important;
     font-weight: 800 !important;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    line-height: 1.1 !important;
 }
 
 /* Pemisah Vertikal untuk Total Value */
 .header-divider {
-    height: 48px;
+    height: 40px;
     width: 2px;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.25);
     margin: 0 32px;
 }
 
 /* Label & Nominal di Header */
 .header-kpi-label {
-    color: #F8FAFC !important; /* Putih Terang */
+    color: rgba(255, 255, 255, 0.9) !important;
     font-size: 0.75rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -80,30 +96,36 @@ st.markdown("""
     margin-bottom: 2px !important;
 }
 .header-kpi-value {
-    /* Teks Gradient Biru GSB */
-    background: linear-gradient(135deg, #0F172A 0%, #1D4ED8 100%);
+    /* Gradient Biru Terang (Cyan-Navy) agar kontras menyala di background oranye */
+    background: linear-gradient(135deg, #E0F2FE 0%, #38BDF8 50%, #1D4ED8 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 2.2rem !important;
     font-weight: 800 !important;
     line-height: 1 !important;
     letter-spacing: -0.02em;
-    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
 }
 
-/* Kotak Metrik Super Padat */
+/* Kotak Metrik Super Padat (Liquid Glass) */
 .metric-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
+    background: rgba(255, 255, 255, 0.7); /* Transparansi untuk efek kaca */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
     border-top: 4px solid #1E3A8A; /* Default Navy */
-    border-radius: 6px;
+    border-radius: 10px;
     padding: 16px;
     height: 100%;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.05);
 }
 .metric-card.accent-red { border-top-color: #DC2626; }
 .metric-card.accent-green { border-top-color: #10B981; }
-.metric-card.accent-orange { border-top-color: #E8500A; }
 
 .metric-label {
     color: #64748B;
@@ -129,26 +151,31 @@ st.markdown("""
     text-transform: uppercase;
 }
 
-/* Streamlit DataFrame Override untuk ruang sempit */
+/* Streamlit DataFrame Override (Liquid Glass) */
 .stDataFrame {
-    border: 1px solid #E2E8F0 !important;
-    border-radius: 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    border-radius: 10px !important;
     overflow: hidden !important;
-    background: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02) !important;
 }
 
-/* Login Box (Dibiarkan Proporsional) */
+/* Login Box */
 .login-box {
-    background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
     border-top: 6px solid #E8500A;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 40px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 40px -10px rgba(232, 80, 10, 0.15);
     text-align: center;
 }
 .stTextInput input {
-    background-color: #F8FAFC !important;
+    background-color: rgba(248, 250, 252, 0.8) !important;
     border: 1px solid #CBD5E1 !important;
     border-radius: 8px !important;
     color: #0F172A !important;
@@ -157,6 +184,7 @@ st.markdown("""
 }
 .stTextInput input:focus {
     border-color: #1E3A8A !important;
+    box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -190,7 +218,7 @@ def check_password():
         st.markdown(f"""
         <div class="login-box">
             {img_html}
-            <h2 style="margin:0 0 8px; font-weight:800; font-size:1.6rem; color:#1E3A8A;">GSB Data Consulting</h2>
+            <h2 style="margin:0 0 4px; font-weight:800; font-size:1.6rem; color:#1E3A8A;">GSB Data Consulting</h2>
             <p style="margin:0 0 24px; color:#64748B; font-size:0.9rem;">Authentication Required</p>
         </div>
         """, unsafe_allow_html=True)
@@ -291,7 +319,7 @@ st.markdown(f"""
 <div class="header-container">
     <div style="display: flex; align-items: center;">
         {img_header}
-        <div>
+        <div class="header-text-container">
             <h1 class="header-title">GSB Data Consulting Services</h1>
             <p class="header-subtitle">Department of Data Analytics</p>
         </div>
@@ -308,7 +336,7 @@ st.markdown(f"""
 m1, m2, m3, m4, m5 = st.columns(5)
 
 with m1:
-    st.markdown(f"""<div class="metric-card"><div class="metric-label">Gross Tax Accum.</div><div class="metric-value">Rp {accum_gross:,.0f}</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="metric-card"><div class="metric-label">Gross Revenue Before Tax</div><div class="metric-value">Rp {accum_gross:,.0f}</div></div>""", unsafe_allow_html=True)
 with m2:
     st.markdown(f"""<div class="metric-card accent-green"><div class="metric-label" style="color:#10B981;">Total Net Revenue</div><div class="metric-value" style="color:#10B981;">Rp {accum_net:,.0f}</div></div>""", unsafe_allow_html=True)
 with m3:
@@ -322,10 +350,9 @@ with m5:
 st.markdown("<div style='margin-top: 24px;'></div>", unsafe_allow_html=True)
 
 # -- Tabel 3 Kolom Berdampingan --
-# Mengubah porsi lebar agar tabel yang detail mendapat ruang yang pas
 col_left, col_mid, col_right = st.columns([1, 1, 1.5], gap="medium")
 
-# Variabel tinggi tabel (Height 230 memastikan hanya ~5 baris yang tampil, sisanya harus di-scroll)
+# Tinggi statis agar tabel panjang di-scroll di dalam kotaknya
 TABLE_HEIGHT = 230
 
 with col_left:
