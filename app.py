@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# 1. CSS Injection: Light Theme Glassmorphism (Orange, Blue, Green, Red) + Layout Fixes
+# 1. CSS Injection: Light Theme Glassmorphism + Layout Fixes
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -90,7 +90,7 @@ st.markdown("""
     letter-spacing: 0.05em;
 }
 
-/* PERBAIKAN: Base Glassmorphism Card (Equal Height & Spacing) */
+/* Base Glassmorphism Card (Equal Height) */
 .custom-metric-card, .fin-card {
     background: rgba(255, 255, 255, 0.6) !important;
     backdrop-filter: blur(16px) !important;
@@ -101,7 +101,7 @@ st.markdown("""
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
-    min-height: 175px !important; /* Memaksa semua kotak sama besar */
+    min-height: 160px !important;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
@@ -115,7 +115,7 @@ st.markdown("""
     font-weight: 700 !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
-    margin-bottom: auto !important; /* Mendorong nilai ke bawah */
+    margin-bottom: auto !important;
 }
 .cmc-value {
     color: #0F172A !important;
@@ -124,11 +124,7 @@ st.markdown("""
     line-height: 1.1 !important;
     letter-spacing: -0.03em !important;
     margin-top: 12px !important;
-}
-.cmc-caption {
-    color: #64748B !important;
-    font-size: 0.85rem !important;
-    margin-top: 8px !important;
+    white-space: nowrap !important; /* Mencegah Rp dan nominal terputus */
 }
 
 /* Semantic Glass Cards (+ and -) */
@@ -146,21 +142,22 @@ st.markdown("""
 .card-danger .cmc-label { color: #B91C1C !important; }
 .card-danger .cmc-value { color: #DC2626 !important; }
 
-/* Streamlit DataFrame Override (Forcing Light Mode Colors) */
+/* Streamlit DataFrame Override */
 .stDataFrame {
     border: 1px solid rgba(15, 23, 42, 0.1) !important;
     border-radius: 12px !important;
     overflow: hidden !important;
-    background: #FFFFFF !important;
+    background: white !important;
 }
 
-/* PERBAIKAN: Nav Menu Styles (Alignment Sejajar) */
+/* Nav Menu Styles (Flex-Row Alignment) */
 div[data-testid="stRadio"] div[role="radiogroup"] {
     gap: 12px !important;
     width: 100% !important;
 }
 div[data-testid="stRadio"] div[role="radiogroup"] > label {
-    display: flex !important; /* Flexbox untuk mensejajarkan ikon & teks */
+    display: flex !important;
+    flex-direction: row !important; /* Memaksa bulatan & teks sejajar kiri-kanan */
     align-items: center !important;
     width: 100% !important;
     background-color: rgba(255, 255, 255, 0.6) !important;
@@ -178,16 +175,19 @@ div[data-testid="stRadio"] div[role="radiogroup"] > label:hover {
 div[data-testid="stRadio"] div[role="radiogroup"] > label:hover p {
     color: #FFFFFF !important;
 }
-/* Menyesuaikan margin bulatan asli radio button agar sejajar */
-div[data-testid="stRadio"] div[data-baseweb="radio"] {
+/* Menyesuaikan wadah bulatan radio agar tidak turun */
+div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
+    margin-right: 12px !important;
+    margin-top: 0 !important;
     margin-bottom: 0 !important;
-    margin-right: 8px !important;
 }
 div[data-testid="stRadio"] div[data-testid="stMarkdownContainer"] p {
     font-size: 0.95rem !important;
     font-weight: 700 !important;
     color: #0F172A !important;
     margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
     transition: color 0.2s ease !important;
 }
 
@@ -373,7 +373,9 @@ with content_col:
     if selected_view == "Executive Summary":
         st.markdown('<div class="section-title">Executive Summary</div>', unsafe_allow_html=True)
         
-        c1, c2 = st.columns(2)
+        # PERBAIKAN: Menjadi 3 Kolom Sejajar agar full width & proporsional
+        c1, c2, c3 = st.columns(3)
+        
         with c1:
             st.markdown(f"""
             <div class="custom-metric-card" style="margin-bottom: 24px;">
@@ -382,26 +384,19 @@ with content_col:
             </div>
             """, unsafe_allow_html=True)
             
+        with c2:
             st.markdown(f"""
-            <div class="custom-metric-card card-danger">
+            <div class="custom-metric-card card-danger" style="margin-bottom: 24px;">
                 <div class="cmc-label">Pending Clients</div>
                 <div class="cmc-value">{total_pending}</div>
             </div>
             """, unsafe_allow_html=True)
             
-        with c2:
+        with c3:
             st.markdown(f"""
             <div class="custom-metric-card card-success" style="margin-bottom: 24px;">
                 <div class="cmc-label">Completed Clients</div>
                 <div class="cmc-value">{total_completed}</div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown(f"""
-            <div class="custom-metric-card">
-                <div class="cmc-label">Base Revenue</div>
-                <div class="cmc-value">Rp {profit_completed:,.0f}</div>
-                <div class="cmc-caption">+ Rp {total_commitment:,.0f} (Commitment Fees)</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -414,21 +409,21 @@ with content_col:
             st.markdown(f"""
             <div class="fin-card">
                 <div class="cmc-label">Total Gross Accumulation</div>
-                <div class="cmc-value">Rp {accum_gross:,.0f}</div>
+                <div class="cmc-value">Rp&nbsp;{accum_gross:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
         with t2:
             st.markdown(f"""
             <div class="fin-card card-danger">
                 <div class="cmc-label">Total Tax Liability</div>
-                <div class="cmc-value">Rp {accum_tax:,.0f}</div>
+                <div class="cmc-value">Rp&nbsp;{accum_tax:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
         with t3:
             st.markdown(f"""
             <div class="fin-card card-success">
                 <div class="cmc-label">Total Net Revenue</div>
-                <div class="cmc-value">Rp {accum_net:,.0f}</div>
+                <div class="cmc-value">Rp&nbsp;{accum_net:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -466,7 +461,8 @@ with content_col:
                     margin=dict(t=0, b=0, l=0, r=0),
                     showlegend=False
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                # PERBAIKAN: Menonaktifkan tema default streamlit agar warna navy tereksekusi
+                st.plotly_chart(fig, use_container_width=True, theme=None)
         else:
             st.warning("Service column not found in incoming database.")
 
@@ -527,7 +523,6 @@ with content_col:
             with c_chart:
                 fig2 = px.bar(consultant_df, x='Clients Handled', y='Consultant', orientation='h')
                 
-                # PERBAIKAN: Mengubah warna font Plotly menjadi gelap (#0F172A)
                 fig2.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)',
                     plot_bgcolor='rgba(0,0,0,0)',
@@ -543,6 +538,8 @@ with content_col:
                     marker_line_color='#FFFFFF', 
                     marker_line_width=1.5
                 )
-                st.plotly_chart(fig2, use_container_width=True)
+                
+                # PERBAIKAN: Menonaktifkan tema default streamlit agar text sumbu Y tidak memutih
+                st.plotly_chart(fig2, use_container_width=True, theme=None)
         else:
             st.warning("Consultant column not found in incoming database.")
