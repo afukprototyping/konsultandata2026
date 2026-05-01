@@ -6,13 +6,13 @@ import base64
 import os
 
 st.set_page_config(
-    page_title="GSB Operations Dashboard",
+    page_title="GSB Consulting Dashboard",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
 # ==========================================
-# 1. CSS INJECTION (GSB BRANDING: ORANGE & NAVY)
+# 1. CSS INJECTION (ULTRA-COMPACT, GSB BRANDING)
 # ==========================================
 st.markdown("""
 <style>
@@ -22,101 +22,101 @@ st.markdown("""
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-/* Base App Background */
 .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
     background-color: #F8FAFC !important;
 }
 
 #MainMenu, footer, header { visibility: hidden; }
 
+/* Mengompres ruang kosong layar secara ekstrem */
 .block-container {
-    padding-top: 2rem !important;
-    padding-bottom: 4rem !important;
-    max-width: 1200px !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    max-width: 1360px !important;
 }
 
-/* GSB Header (Orange & Navy Accents) */
+/* Header Kompak */
 .header-container {
-    background: linear-gradient(135deg, #E8500A 0%, #C0392B 100%);
-    border-radius: 12px;
-    padding: 24px 32px;
-    margin-bottom: 32px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 16px 24px;
+    margin-bottom: 16px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; /* Justify Kiri */
     align-items: center;
-    box-shadow: 0 4px 15px rgba(232, 80, 10, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 .header-title {
-    color: #FFFFFF !important;
-    font-size: 1.85rem !important;
+    color: #1E3A8A !important;
+    font-size: 1.5rem !important;
     font-weight: 800 !important;
-    margin: 0 0 4px 0 !important;
+    margin: 0 0 2px 0 !important;
     letter-spacing: -0.02em !important;
 }
 .header-subtitle {
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-size: 0.95rem !important;
+    color: #64748B !important;
+    font-size: 0.85rem !important;
     margin: 0 !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
 }
 
-/* Metric Cards (Navy Borders for Contrast) */
+/* Pemisah Vertikal untuk Total Value */
+.header-divider {
+    height: 48px;
+    width: 2px;
+    background-color: #E2E8F0;
+    margin: 0 32px;
+}
+
+/* Kotak Metrik Super Padat */
 .metric-card {
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0;
-    border-top: 4px solid #1E3A8A; /* GSB Navy */
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-top: 4px solid #1E3A8A; /* Default Navy */
+    border-radius: 6px;
+    padding: 16px;
     height: 100%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
-.metric-card.orange-accent {
-    border-top: 4px solid #E8500A; /* GSB Orange */
-}
+.metric-card.accent-red { border-top-color: #DC2626; }
+.metric-card.accent-green { border-top-color: #10B981; }
+.metric-card.accent-orange { border-top-color: #E8500A; }
+
 .metric-label {
     color: #64748B;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 .metric-value {
     color: #0F172A;
-    font-size: 1.85rem;
+    font-size: 1.6rem;
     font-weight: 800;
     line-height: 1.1;
 }
-.metric-subtext {
-    color: #94A3B8;
-    font-size: 0.8rem;
-    margin-top: 8px;
-    font-weight: 500;
-}
 
-/* Section Headers */
-.section-header {
-    font-size: 1.1rem;
+/* Section Mini Header */
+.mini-header {
+    font-size: 0.85rem;
     font-weight: 800;
-    color: #1E3A8A; /* GSB Navy */
-    margin-top: 32px;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #E2E8F0;
+    color: #1E3A8A;
+    margin-bottom: 8px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
-/* Streamlit DataFrame Override */
+/* Streamlit DataFrame Override untuk ruang sempit */
 .stDataFrame {
     border: 1px solid #E2E8F0 !important;
-    border-radius: 8px !important;
+    border-radius: 6px !important;
     overflow: hidden !important;
     background: #FFFFFF !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
 }
 
-/* Login Box */
+/* Login Box (Dibiarkan Proporsional) */
 .login-box {
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0;
@@ -136,7 +136,6 @@ st.markdown("""
 }
 .stTextInput input:focus {
     border-color: #1E3A8A !important;
-    box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -161,17 +160,17 @@ def check_password():
         return True
 
     logo_b64 = get_base64_image("logo gsb.png")
-    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 100px; width: auto; margin-bottom: 24px;">' if logo_b64 else ''
+    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 90px; width: auto; margin-bottom: 24px;">' if logo_b64 else ''
 
     _, mid, _ = st.columns([1, 1.2, 1])
     
     with mid:
-        st.markdown("<div style='margin-top: 10vh;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 15vh;'></div>", unsafe_allow_html=True)
         st.markdown(f"""
         <div class="login-box">
             {img_html}
-            <h2 style="margin:0 0 8px; font-weight:800; font-size:1.75rem; color:#1E3A8A;">GSB Operations</h2>
-            <p style="margin:0 0 24px; color:#64748B; font-size:0.95rem;">Authentication Required</p>
+            <h2 style="margin:0 0 8px; font-weight:800; font-size:1.6rem; color:#1E3A8A;">GSB Data Consulting</h2>
+            <p style="margin:0 0 24px; color:#64748B; font-size:0.9rem;">Authentication Required</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -186,7 +185,7 @@ if not check_password():
     st.stop()
 
 # ==========================================
-# 3. DATA EXTRACTION & CLEANING
+# 3. DATA EXTRACTION
 # ==========================================
 def _find_col(df: pd.DataFrame, exact: str, keyword: str) -> str | None:
     if exact in df.columns: return exact
@@ -213,15 +212,13 @@ def load_data():
     col_nama    = _find_col(df1, "Nama Klien", "Nama")
     col_konsul  = _find_col(df1, "Konsultan", "Konsultan")
 
-    if not col_id or not col_nom:
-        raise ValueError("Critical columns missing in SPS 2.")
+    if not col_id or not col_nom: raise ValueError("Critical columns missing in SPS 2.")
 
     df2[col_id]  = df2[col_id].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(3)
     df2[col_nom] = pd.to_numeric(df2[col_nom], errors="coerce").fillna(0)
 
     col_id_sps1 = _find_col(df1, "ID Klien", "ID Klien")
-    if not col_id_sps1:
-        raise ValueError("Critical column 'ID Klien' missing in SPS 1.")
+    if not col_id_sps1: raise ValueError("Critical column 'ID Klien' missing in SPS 1.")
     
     df1['Generated_ID'] = df1[col_id_sps1].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(3)
 
@@ -238,7 +235,6 @@ except Exception as e:
 # ==========================================
 COMMITMENT_FEE = 50_000
 
-# Client & Revenue Metrics
 total_incoming   = len(df_incoming)
 total_completed  = len(df_completed)
 total_pending    = total_incoming - total_completed
@@ -246,15 +242,13 @@ profit_completed = df_completed[COL_NOM].sum()
 total_commitment = total_incoming * COMMITMENT_FEE
 total_valuation  = profit_completed + total_commitment
 
-# Tax Calculations
 def calculate_tax(nominal: float) -> float:
     if nominal < 150_000:  return 0.0
     if nominal <= 500_000: return nominal * 0.10
     return nominal * 0.12
 
 pajak_df = (
-    df_completed.groupby(COL_ID)[COL_NOM]
-    .sum().reset_index()
+    df_completed.groupby(COL_ID)[COL_NOM].sum().reset_index()
     .rename(columns={COL_ID: "Client ID", COL_NOM: "Gross Accumulation"})
 )
 pajak_df["Tax Liability"] = pajak_df["Gross Accumulation"].apply(calculate_tax)
@@ -264,105 +258,62 @@ accum_gross = pajak_df["Gross Accumulation"].sum()
 accum_tax   = pajak_df["Tax Liability"].sum()
 accum_net   = pajak_df["Net Revenue"].sum()
 
-
 # ==========================================
-# 5. SINGLE PAGE DASHBOARD RENDERING
+# 5. SINGLE-VIEW ULTRA COMPACT LAYOUT
 # ==========================================
 
-# -- HEADER --
+# -- Header Terpusat Kiri --
 logo_b64_header = get_base64_image("logo gsb.png")
-img_header = f'<img src="data:image/png;base64,{logo_b64_header}" style="height: 48px; margin-right: 16px;">' if logo_b64_header else ''
+img_header = f'<img src="data:image/png;base64,{logo_b64_header}" style="height: 44px; margin-right: 16px;">' if logo_b64_header else ''
 
 st.markdown(f"""
 <div class="header-container">
     <div style="display: flex; align-items: center;">
         {img_header}
         <div>
-            <h1 class="header-title">GSB Workspace</h1>
-            <p class="header-subtitle">Data Analytics Department &middot; Operations Dashboard</p>
+            <h1 class="header-title">GSB Data Consulting Services</h1>
+            <p class="header-subtitle">Department of Data Analytics</p>
         </div>
+    </div>
+    <div class="header-divider"></div>
+    <div>
+        <div class="metric-label">Total Estimated Value</div>
+        <div class="metric-value" style="color: #E8500A; font-size: 1.85rem;">Rp {total_valuation:,.0f}</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
+# -- Metrik 1 Baris Penuh --
+m1, m2, m3, m4, m5 = st.columns(5)
 
-# -- SECTION 1: EXECUTIVE METRICS --
-st.markdown('<div class="section-header">1. Executive Overview</div>', unsafe_allow_html=True)
+with m1:
+    st.markdown(f"""<div class="metric-card"><div class="metric-label">Gross Tax Accum.</div><div class="metric-value">Rp {accum_gross:,.0f}</div></div>""", unsafe_allow_html=True)
+with m2:
+    st.markdown(f"""<div class="metric-card accent-green"><div class="metric-label" style="color:#10B981;">Total Net Revenue</div><div class="metric-value" style="color:#10B981;">Rp {accum_net:,.0f}</div></div>""", unsafe_allow_html=True)
+with m3:
+    st.markdown(f"""<div class="metric-card accent-red"><div class="metric-label" style="color:#DC2626;">Total Tax Liability</div><div class="metric-value" style="color:#DC2626;">Rp {accum_tax:,.0f}</div></div>""", unsafe_allow_html=True)
+with m4:
+    st.markdown(f"""<div class="metric-card accent-green"><div class="metric-label" style="color:#10B981;">Completed Clients</div><div class="metric-value" style="color:#10B981;">{total_completed} <span style="font-size:0.8rem; color:#64748B;">/ {total_incoming}</span></div></div>""", unsafe_allow_html=True)
+with m5:
+    alert_color = "#DC2626" if total_pending > 0 else "#10B981"
+    st.markdown(f"""<div class="metric-card {'accent-red' if total_pending > 0 else 'accent-green'}"><div class="metric-label" style="color:{alert_color};">Pending Clients</div><div class="metric-value" style="color:{alert_color};">{total_pending}</div></div>""", unsafe_allow_html=True)
 
-c1, c2, c3, c4 = st.columns(4)
-with c1:
-    st.markdown(f"""
-    <div class="metric-card">
-        <div class="metric-label">Incoming Clients</div>
-        <div class="metric-value">{total_incoming}</div>
-    </div>
-    """, unsafe_allow_html=True)
-with c2:
-    st.markdown(f"""
-    <div class="metric-card">
-        <div class="metric-label">Completed Clients</div>
-        <div class="metric-value">{total_completed}</div>
-    </div>
-    """, unsafe_allow_html=True)
-with c3:
-    alert_class = "orange-accent" if total_pending > 0 else ""
-    st.markdown(f"""
-    <div class="metric-card {alert_class}">
-        <div class="metric-label" style="color: {'#E8500A' if total_pending > 0 else '#64748B'};">Pending Clients</div>
-        <div class="metric-value" style="color: {'#E8500A' if total_pending > 0 else '#0F172A'};">{total_pending}</div>
-    </div>
-    """, unsafe_allow_html=True)
-with c4:
-    st.markdown(f"""
-    <div class="metric-card orange-accent">
-        <div class="metric-label">Total Est. Value</div>
-        <div class="metric-value" style="font-size: 1.5rem;">Rp {total_valuation:,.0f}</div>
-        <div class="metric-subtext">Base: Rp {profit_completed:,.0f} <br> Admin: Rp {total_commitment:,.0f}</div>
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown("<div style='margin-top: 24px;'></div>", unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
-
-t1, t2, t3 = st.columns(3)
-with t1:
-    st.markdown(f"""
-    <div class="metric-card">
-        <div class="metric-label">Gross Tax Accumulation</div>
-        <div class="metric-value">Rp {accum_gross:,.0f}</div>
-    </div>
-    """, unsafe_allow_html=True)
-with t2:
-    st.markdown(f"""
-    <div class="metric-card orange-accent">
-        <div class="metric-label" style="color: #E8500A;">Total Tax Liability</div>
-        <div class="metric-value" style="color: #E8500A;">Rp {accum_tax:,.0f}</div>
-    </div>
-    """, unsafe_allow_html=True)
-with t3:
-    st.markdown(f"""
-    <div class="metric-card">
-        <div class="metric-label">Total Net Revenue</div>
-        <div class="metric-value">Rp {accum_net:,.0f}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-
-# -- SECTION 2: OPERATIONAL DISTRIBUTION (SIDE BY SIDE TABLES) --
-st.markdown('<div class="section-header">2. Operational Workload</div>', unsafe_allow_html=True)
-
-col_left, col_right = st.columns(2, gap="large")
+# -- Tabel 3 Kolom Berdampingan --
+col_left, col_mid, col_right = st.columns([1, 1, 1.5], gap="medium")
 
 with col_left:
-    st.markdown('<p style="font-weight: 700; color: #0F172A; margin-bottom: 8px;">Client Service Distribution</p>', unsafe_allow_html=True)
+    st.markdown('<div class="mini-header">Service Distribution</div>', unsafe_allow_html=True)
     if COL_LAYANAN and COL_LAYANAN in df_incoming.columns:
         service_dist = df_incoming[COL_LAYANAN].value_counts().reset_index()
-        service_dist.columns = ["Service Type", "Clients Count"]
+        service_dist.columns = ["Service Type", "Qty"]
         st.dataframe(service_dist, use_container_width=True, hide_index=True)
     else:
-        st.warning("Service column not found.")
+        st.warning("N/A")
 
-with col_right:
-    st.markdown('<p style="font-weight: 700; color: #0F172A; margin-bottom: 8px;">Consultant Workload Mapping</p>', unsafe_allow_html=True)
+with col_mid:
+    st.markdown('<div class="mini-header">Consultant Workload</div>', unsafe_allow_html=True)
     CONSULTANTS_LIST = [
         "Helmi Falah", "Nyayu Azzahra Nabila", "Cut Ashifa Sawallida", "Retno Sari", 
         "Rizky Arif Wicaksono", "Pascal Arya Nugroho", "Muhammad Khayruhanif", 
@@ -370,44 +321,36 @@ with col_right:
         "Cameliya Ulya Hidayah", "Intan Aisa", "Varel Geo Syah Putra", 
         "Muhammad Shira Pramudita", "Nabeel Muhammad Diaz"
     ]
-    consultant_df = pd.DataFrame({"Consultant Name": CONSULTANTS_LIST, "Clients Handled": 0})
-
+    consultant_df = pd.DataFrame({"Consultant": CONSULTANTS_LIST, "Handled": 0})
     if COL_KONSULTAN and COL_KONSULTAN in df_incoming.columns:
         actual_counts = df_incoming[COL_KONSULTAN].astype(str).str.strip().value_counts().reset_index()
-        actual_counts.columns = ["Consultant Name", "Count"]
-
+        actual_counts.columns = ["Consultant", "Count"]
         for idx, row in consultant_df.iterrows():
-            match = actual_counts[actual_counts['Consultant Name'].str.lower() == row['Consultant Name'].lower()]
-            if not match.empty:
-                consultant_df.at[idx, 'Clients Handled'] = match['Count'].values[0]
-
-        consultant_df = consultant_df.sort_values(by="Clients Handled", ascending=False).reset_index(drop=True)
+            match = actual_counts[actual_counts['Consultant'].str.lower() == row['Consultant'].lower()]
+            if not match.empty: consultant_df.at[idx, 'Handled'] = match['Count'].values[0]
+        consultant_df = consultant_df.sort_values(by="Handled", ascending=False).reset_index(drop=True)
         st.dataframe(consultant_df, use_container_width=True, hide_index=True)
     else:
-        st.warning("Consultant column not found.")
+        st.warning("N/A")
 
-
-# -- SECTION 3: PENDING ACTION ITEMS --
-st.markdown('<div class="section-header">3. Action Items: Pending Clients</div>', unsafe_allow_html=True)
-
-completed_ids = df_completed[COL_ID].tolist()
-pending_df = df_incoming[~df_incoming['Generated_ID'].isin(completed_ids)].copy()
-
-if pending_df.empty:
-    st.success("All incoming clients have been completed and recorded.")
-else:
-    display_cols = ['Generated_ID']
-    rename_dict = {'Generated_ID': 'Client ID'}
-    
-    if COL_NAMA and COL_NAMA in pending_df.columns:
-        display_cols.append(COL_NAMA)
-        rename_dict[COL_NAMA] = 'Client Name'
-    if COL_LAYANAN and COL_LAYANAN in pending_df.columns:
-        display_cols.append(COL_LAYANAN)
-        rename_dict[COL_LAYANAN] = 'Service Required'
-    if COL_KONSULTAN and COL_KONSULTAN in pending_df.columns:
-        display_cols.append(COL_KONSULTAN)
-        rename_dict[COL_KONSULTAN] = 'Assigned Consultant'
-    
-    clean_pending_df = pending_df[display_cols].rename(columns=rename_dict)
-    st.dataframe(clean_pending_df, use_container_width=True, hide_index=True)
+with col_right:
+    st.markdown('<div class="mini-header">Pending Clients Roster</div>', unsafe_allow_html=True)
+    completed_ids = df_completed[COL_ID].tolist()
+    pending_df = df_incoming[~df_incoming['Generated_ID'].isin(completed_ids)].copy()
+    if pending_df.empty:
+        st.success("Operational clear. All incoming clients have been processed.")
+    else:
+        display_cols = ['Generated_ID']
+        rename_dict = {'Generated_ID': 'ID'}
+        if COL_NAMA and COL_NAMA in pending_df.columns:
+            display_cols.append(COL_NAMA)
+            rename_dict[COL_NAMA] = 'Client'
+        if COL_LAYANAN and COL_LAYANAN in pending_df.columns:
+            display_cols.append(COL_LAYANAN)
+            rename_dict[COL_LAYANAN] = 'Service'
+        if COL_KONSULTAN and COL_KONSULTAN in pending_df.columns:
+            display_cols.append(COL_KONSULTAN)
+            rename_dict[COL_KONSULTAN] = 'Consultant'
+        
+        clean_pending_df = pending_df[display_cols].rename(columns=rename_dict)
+        st.dataframe(clean_pending_df, use_container_width=True, hide_index=True)
