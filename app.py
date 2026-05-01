@@ -96,8 +96,8 @@ st.markdown("""
     margin-bottom: 2px !important;
 }
 .header-kpi-value {
-    /* Gradient Biru Terang (Cyan-Navy) agar kontras menyala di background oranye */
-    background: linear-gradient(135deg, #E0F2FE 0%, #38BDF8 50%, #1D4ED8 100%);
+    /* Gradient Biru Tua ke Terang (Navy-Sky Blue) agar kontras menyala di background oranye */
+    background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 50%, #7DD3FC 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 2.2rem !important;
