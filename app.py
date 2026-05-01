@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# 1. CSS Injection: Light Theme Glassmorphism (Orange, Blue, Green, Red)
+# 1. CSS Injection: Light Theme Glassmorphism (Orange, Blue, Green, Red) + Layout Fixes
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -36,7 +36,7 @@ st.markdown("""
     max-width: 1240px !important;
 }
 
-/* Header Container: Orange Gradient (Sesuai Gambar) */
+/* Header Container: Orange Gradient */
 .header-container {
     background: linear-gradient(135deg, #F97316 0%, #DC2626 100%) !important;
     border-radius: 12px;
@@ -90,7 +90,7 @@ st.markdown("""
     letter-spacing: 0.05em;
 }
 
-/* Base Glassmorphism Card (White) */
+/* PERBAIKAN: Base Glassmorphism Card (Equal Height & Spacing) */
 .custom-metric-card, .fin-card {
     background: rgba(255, 255, 255, 0.6) !important;
     backdrop-filter: blur(16px) !important;
@@ -98,7 +98,10 @@ st.markdown("""
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
     border-radius: 16px !important;
     padding: 28px !important;
-    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-height: 175px !important; /* Memaksa semua kotak sama besar */
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
@@ -108,11 +111,11 @@ st.markdown("""
 }
 .cmc-label {
     color: #64748B !important;
-    font-size: 0.80rem !important;
+    font-size: 0.75rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
-    margin-bottom: 12px !important;
+    margin-bottom: auto !important; /* Mendorong nilai ke bawah */
 }
 .cmc-value {
     color: #0F172A !important;
@@ -120,44 +123,46 @@ st.markdown("""
     font-weight: 800 !important;
     line-height: 1.1 !important;
     letter-spacing: -0.03em !important;
+    margin-top: 12px !important;
 }
 .cmc-caption {
     color: #64748B !important;
     font-size: 0.85rem !important;
-    margin-top: 12px !important;
+    margin-top: 8px !important;
 }
 
 /* Semantic Glass Cards (+ and -) */
 .card-success {
-    background: rgba(209, 250, 229, 0.65) !important; /* Soft Green Glass */
+    background: rgba(209, 250, 229, 0.65) !important;
     border-color: rgba(167, 243, 208, 0.8) !important;
 }
 .card-success .cmc-label { color: #047857 !important; }
 .card-success .cmc-value { color: #059669 !important; }
 
 .card-danger {
-    background: rgba(254, 226, 226, 0.65) !important; /* Soft Red Glass */
+    background: rgba(254, 226, 226, 0.65) !important;
     border-color: rgba(254, 202, 202, 0.8) !important;
 }
 .card-danger .cmc-label { color: #B91C1C !important; }
 .card-danger .cmc-value { color: #DC2626 !important; }
 
-/* Streamlit DataFrame Override */
+/* Streamlit DataFrame Override (Forcing Light Mode Colors) */
 .stDataFrame {
     border: 1px solid rgba(15, 23, 42, 0.1) !important;
     border-radius: 12px !important;
     overflow: hidden !important;
-    background: white !important;
+    background: #FFFFFF !important;
 }
 
-/* Nav Menu Styles (Blue Accents) */
+/* PERBAIKAN: Nav Menu Styles (Alignment Sejajar) */
 div[data-testid="stRadio"] div[role="radiogroup"] {
     gap: 12px !important;
     width: 100% !important;
 }
 div[data-testid="stRadio"] div[role="radiogroup"] > label {
+    display: flex !important; /* Flexbox untuk mensejajarkan ikon & teks */
+    align-items: center !important;
     width: 100% !important;
-    display: block !important;
     background-color: rgba(255, 255, 255, 0.6) !important;
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
@@ -168,13 +173,15 @@ div[data-testid="stRadio"] div[role="radiogroup"] > label {
     box-shadow: 0 4px 6px rgba(0,0,0,0.02) !important;
 }
 div[data-testid="stRadio"] div[role="radiogroup"] > label:hover {
-    background-color: #0F172A !important; /* Deep Blue from image button */
+    background-color: #0F172A !important; 
 }
 div[data-testid="stRadio"] div[role="radiogroup"] > label:hover p {
     color: #FFFFFF !important;
 }
-div[data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child {
-    display: none !important;
+/* Menyesuaikan margin bulatan asli radio button agar sejajar */
+div[data-testid="stRadio"] div[data-baseweb="radio"] {
+    margin-bottom: 0 !important;
+    margin-right: 8px !important;
 }
 div[data-testid="stRadio"] div[data-testid="stMarkdownContainer"] p {
     font-size: 0.95rem !important;
@@ -208,7 +215,7 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
-# 3. Unified Authentication System (Light Glassmorphism)
+# 3. Unified Authentication System
 def check_password():
     def _submit():
         st.session_state["auth_ok"] = (
@@ -375,7 +382,6 @@ with content_col:
             </div>
             """, unsafe_allow_html=True)
             
-            # Semantic Card (Danger) if pending > 0
             st.markdown(f"""
             <div class="custom-metric-card card-danger">
                 <div class="cmc-label">Pending Clients</div>
@@ -384,7 +390,6 @@ with content_col:
             """, unsafe_allow_html=True)
             
         with c2:
-            # Semantic Card (Success)
             st.markdown(f"""
             <div class="custom-metric-card card-success" style="margin-bottom: 24px;">
                 <div class="cmc-label">Completed Clients</div>
@@ -409,21 +414,21 @@ with content_col:
             st.markdown(f"""
             <div class="fin-card">
                 <div class="cmc-label">Total Gross Accumulation</div>
-                <div class="cmc-value" style="font-size:1.6rem;">Rp {accum_gross:,.0f}</div>
+                <div class="cmc-value">Rp {accum_gross:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
         with t2:
             st.markdown(f"""
             <div class="fin-card card-danger">
                 <div class="cmc-label">Total Tax Liability</div>
-                <div class="cmc-value" style="font-size:1.6rem;">Rp {accum_tax:,.0f}</div>
+                <div class="cmc-value">Rp {accum_tax:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
         with t3:
             st.markdown(f"""
             <div class="fin-card card-success">
                 <div class="cmc-label">Total Net Revenue</div>
-                <div class="cmc-value" style="font-size:1.6rem;">Rp {accum_net:,.0f}</div>
+                <div class="cmc-value">Rp {accum_net:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -447,7 +452,6 @@ with content_col:
             with col_a:
                 st.dataframe(service_dist, use_container_width=True, hide_index=True)
             with col_b:
-                # Menggunakan palet Oranye dan Biru
                 custom_colors = ['#EA580C', '#1D4ED8', '#F59E0B', '#3B82F6', '#93C5FD']
                 fig = px.pie(service_dist, values='Number of Clients', names='Service Type', hole=0.55, color_discrete_sequence=custom_colors)
                 fig.update_traces(
@@ -522,6 +526,8 @@ with content_col:
                 st.dataframe(consultant_df, use_container_width=True, hide_index=True)
             with c_chart:
                 fig2 = px.bar(consultant_df, x='Clients Handled', y='Consultant', orientation='h')
+                
+                # PERBAIKAN: Mengubah warna font Plotly menjadi gelap (#0F172A)
                 fig2.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)',
                     plot_bgcolor='rgba(0,0,0,0)',
@@ -532,7 +538,6 @@ with content_col:
                     yaxis_title=""
                 )
                 
-                # Menggunakan warna biru gelap (Navy) untuk bar chart
                 fig2.update_traces(
                     marker_color='#1E3A8A', 
                     marker_line_color='#FFFFFF', 
