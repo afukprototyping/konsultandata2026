@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# 1. CSS Injection: Apple macOS / visionOS Glassmorphism Style
+# 1. CSS Injection: Advanced Apple/macOS Glassmorphism & Mesh Gradients
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
@@ -21,13 +21,14 @@ html, body, [class*="css"] {
     font-family: 'SF Pro Display', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* Mac-style Ambient Mesh Gradient Background */
+/* Rich Ambient Mesh Gradient Background */
 [data-testid="stAppViewContainer"] {
-    background-color: #070B14;
+    background-color: #0B0F19;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.05) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 55%),
+        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.18) 0px, transparent 55%),
+        radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.12) 0px, transparent 55%),
+        radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
     background-attachment: fixed;
 }
 
@@ -39,13 +40,13 @@ html, body, [class*="css"] {
     max-width: 1240px !important;
 }
 
-/* Glassmorphism Panel Base (The Apple Material) */
+/* Glassmorphism Panel Base */
 .glass-panel {
-    background: rgba(20, 27, 45, 0.55);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Top highlight for 3D depth */
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.05);
 }
 
@@ -112,7 +113,7 @@ html, body, [class*="css"] {
 }
 .custom-metric-card:hover {
     transform: translateY(-5px) scale(1.01);
-    background: rgba(30, 41, 59, 0.65);
+    background: rgba(30, 41, 59, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255,255,255,0.08);
 }
@@ -136,7 +137,7 @@ html, body, [class*="css"] {
     margin-top: 12px;
     font-weight: 400;
 }
-.cmc-value.warning { color: #FF453A; } /* Apple System Red */
+.cmc-value.warning { color: #FF453A; }
 
 /* Financial Cards */
 .fin-card {
@@ -182,7 +183,7 @@ div[role="radiogroup"] > label:hover {
     background: rgba(255, 255, 255, 0.08);
 }
 div[role="radiogroup"] span[data-baseweb="radio"] {
-    display: none; /* Hide radio dot */
+    display: none;
 }
 div[role="radiogroup"] div[data-testid="stMarkdownContainer"] p {
     font-size: 0.95rem;
@@ -191,32 +192,19 @@ div[role="radiogroup"] div[data-testid="stMarkdownContainer"] p {
     margin: 0;
 }
 
-/* Login Box */
-.login-box {
-    max-width: 480px;
-    margin: 10vh auto;
-    background: rgba(20, 27, 45, 0.65);
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 32px;
-    padding: 56px 48px;
-    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
-    text-align: center;
-}
-
 /* Input Fields Style Override */
 .stTextInput input {
-    background-color: rgba(0, 0, 0, 0.2) !important;
+    background-color: rgba(0, 0, 0, 0.3) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
     color: white !important;
     padding: 14px 16px !important;
+    font-size: 1rem !important;
     transition: all 0.3s ease !important;
+    text-align: center !important;
 }
 .stTextInput input:focus {
-    background-color: rgba(0, 0, 0, 0.4) !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
     border: 1px solid rgba(56, 189, 248, 0.5) !important;
     box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15) !important;
 }
@@ -230,7 +218,7 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
-# 3. Authentication System (Mac Style Login)
+# 3. Secure Unified Authentication System
 def check_password():
     def _submit():
         st.session_state["auth_ok"] = (
@@ -245,24 +233,40 @@ def check_password():
     title  = "Access Denied" if failed else "Secure Login"
     note   = "Invalid credentials." if failed else "Enter your password to access the workspace."
 
-    # Logo size maximized to 240px. 
     logo_b64 = get_base64_image("logo gsb.png")
-    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 240px; width: auto; object-fit: contain; margin-bottom: 32px; display: block; margin-left: auto; margin-right: auto; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));">' if logo_b64 else ''
+    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 200px; width: auto; object-fit: contain; margin-bottom: 24px; display: block; margin-left: auto; margin-right: auto; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));">' if logo_b64 else ''
 
-    st.markdown(
-        f'<div class="login-box">'
-        f'{img_html}'
-        f'<h2 style="margin:0 0 8px;font-weight:700;font-size:1.85rem;color:#FFFFFF;letter-spacing:-0.03em;">{title}</h2>'
-        f'<p style="margin:0 0 32px;color:#94A3B8;font-size:1rem;">{note}</p>'
-        f'</div>',
-        unsafe_allow_html=True,
-    )
+    # CSS Khusus untuk menyatukan kolom tengah menjadi satu kotak utuh (Single Card)
+    st.markdown("""
+    <style>
+    [data-testid="column"]:nth-of-type(2) {
+        background: rgba(20, 27, 45, 0.65);
+        backdrop-filter: blur(32px) saturate(180%);
+        -webkit-backdrop-filter: blur(32px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-top: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 32px;
+        padding: 56px 48px;
+        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
+        text-align: center;
+        margin-top: 8vh;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     
     _, mid, _ = st.columns([1, 1.2, 1])
+    
     with mid:
-        st.markdown('<div style="margin-top:-95px;"></div>', unsafe_allow_html=True)
+        # Teks dan logo diletakkan berdampingan dengan kotak input dalam satu wadah
+        st.markdown(
+            f'{img_html}'
+            f'<h2 style="margin:0 0 8px;font-weight:700;font-size:1.85rem;color:#FFFFFF;letter-spacing:-0.03em;">{title}</h2>'
+            f'<p style="margin:0 0 32px;color:#94A3B8;font-size:1rem;">{note}</p>',
+            unsafe_allow_html=True,
+        )
         st.text_input("pw", type="password", on_change=_submit, key="_pw",
                       label_visibility="collapsed", placeholder="Password")
+        
     return False
 
 if not check_password():
@@ -547,11 +551,12 @@ with content_col:
                     xaxis_title="Total Clients Handled",
                     yaxis_title=""
                 )
+                
+                # BUG FIXED: removed invalid 'borderpad' argument
                 fig2.update_traces(
                     marker_color='rgba(56, 189, 248, 0.8)', 
                     marker_line_color='rgba(255, 255, 255, 0.2)', 
-                    marker_line_width=1,
-                    borderpad=4
+                    marker_line_width=1
                 )
                 st.plotly_chart(fig2, use_container_width=True)
         else:
