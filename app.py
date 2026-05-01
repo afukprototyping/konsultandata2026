@@ -12,22 +12,22 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# 1. CSS Injection: Global Dashboard Styling (Forced via !important)
+# 1. CSS Injection: Clean Modern, High Contrast, Solid Colors
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-html, body, [class*="css"] {
+/* Memaksa SEMUA elemen menggunakan Plus Jakarta Sans */
+* {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-/* Force App Background with Mesh Gradient */
-.stApp {
-    background-color: #0B0F19 !important;
+/* Memaksa Background Berubah (Menimpa default Streamlit) */
+.stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+    background-color: #070B14 !important;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%) !important;
+        radial-gradient(circle at 15% 50%, rgba(37, 99, 235, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(147, 51, 234, 0.08), transparent 25%) !important;
     background-attachment: fixed !important;
 }
 
@@ -39,52 +39,43 @@ html, body, [class*="css"] {
     max-width: 1240px !important;
 }
 
-/* Glassmorphism Panel Base */
-.glass-panel {
-    background: rgba(15, 23, 42, 0.4) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
-}
-
 /* Header Container */
 .header-container {
-    border-radius: 24px;
-    padding: 36px 48px;
+    background-color: #0F172A !important;
+    border: 1px solid #1E293B !important;
+    border-radius: 16px;
+    padding: 32px 40px;
     margin-bottom: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
 }
 .header-title {
     color: #FFFFFF !important;
-    font-size: 2.5rem !important;
+    font-size: 2.25rem !important;
     font-weight: 800 !important;
-    margin: 0 0 8px 0 !important;
-    letter-spacing: -0.04em !important;
+    margin: 0 0 4px 0 !important;
+    letter-spacing: -0.03em !important;
 }
 .header-subtitle {
     color: #94A3B8 !important;
-    font-size: 1rem !important;
+    font-size: 0.95rem !important;
     margin: 0 !important;
     font-weight: 500 !important;
 }
 .header-kpi-label {
     color: #94A3B8 !important;
-    font-size: 0.8rem !important;
+    font-size: 0.75rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.1em !important;
     text-align: right !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 4px !important;
 }
 .header-kpi-value {
-    background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    font-size: 3rem !important;
+    color: #38BDF8 !important;
+    font-size: 2.8rem !important;
     font-weight: 800 !important;
     line-height: 1 !important;
     text-align: right !important;
@@ -98,84 +89,72 @@ html, body, [class*="css"] {
     color: #F8FAFC !important;
     margin-bottom: 24px !important;
     padding-bottom: 12px !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-bottom: 2px solid #1E293B !important;
 }
 
-/* Metric Cards */
+/* Metric Cards Dasar */
 .custom-metric-card {
-    border-radius: 20px !important;
+    background-color: #111827 !important;
+    border: 1px solid #1F2937 !important;
+    border-radius: 16px !important;
     padding: 28px !important;
     height: 100% !important;
-    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.2s ease, border-color 0.2s ease !important;
 }
 .custom-metric-card:hover {
     transform: translateY(-4px) !important;
-    background: rgba(30, 41, 59, 0.6) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5) !important;
+    border-color: #374151 !important;
 }
 .cmc-label {
-    color: #94A3B8 !important;
+    color: #9CA3AF !important;
     font-size: 0.85rem !important;
     font-weight: 600 !important;
     letter-spacing: 0.05em !important;
-    margin-bottom: 16px !important;
+    text-transform: uppercase !important;
+    margin-bottom: 12px !important;
 }
 .cmc-value {
-    color: #FFFFFF !important;
+    color: #F9FAFB !important;
     font-size: 2.25rem !important;
     font-weight: 800 !important;
     line-height: 1.1 !important;
     letter-spacing: -0.03em !important;
 }
 .cmc-caption {
-    color: #64748B !important;
+    color: #6B7280 !important;
     font-size: 0.85rem !important;
     margin-top: 12px !important;
-}
-.cmc-value.warning { color: #F43F5E !important; }
-
-/* Financial Cards */
-.fin-card {
-    border-radius: 20px !important;
-    padding: 28px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
-.fin-card.danger {
-    background: linear-gradient(145deg, rgba(244,63,94,0.15) 0%, rgba(15,23,42,0.6) 100%) !important;
-    border-color: rgba(244,63,94,0.3) !important;
-}
-.fin-card.success {
-    background: linear-gradient(145deg, rgba(16,185,129,0.15) 0%, rgba(15,23,42,0.6) 100%) !important;
-    border-color: rgba(16,185,129,0.3) !important;
 }
 
 /* Streamlit DataFrame Override */
 .stDataFrame {
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 16px !important;
+    border: 1px solid #1E293B !important;
+    border-radius: 12px !important;
     overflow: hidden !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* -----------------------------------------------------
-   FORCE HIDE RADIO CIRCLES & STYLE AS NAV BUTTONS 
+   Memaksa Menu Navigasi Sama Panjang & Kotak Rapi
 -------------------------------------------------------- */
 div[data-testid="stRadio"] div[role="radiogroup"] {
-    gap: 10px !important;
+    gap: 12px !important;
+    width: 100% !important;
 }
 div[data-testid="stRadio"] div[role="radiogroup"] > label {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    width: 100% !important; /* Memaksa panjang kotak konsisten */
+    display: block !important;
+    background-color: #0F172A !important;
+    border: 1px solid #1E293B !important;
     border-radius: 12px !important;
-    padding: 14px 20px !important;
+    padding: 16px 20px !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
 }
 div[data-testid="stRadio"] div[role="radiogroup"] > label:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background-color: #1E293B !important;
+    border-color: #38BDF8 !important;
 }
 /* Menyembunyikan bulatan asli radio button secara absolut */
 div[data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child {
@@ -187,6 +166,21 @@ div[data-testid="stRadio"] div[data-testid="stMarkdownContainer"] p {
     color: #E2E8F0 !important;
     margin: 0 !important;
 }
+
+/* Input Fields Streamlit */
+.stTextInput input {
+    background-color: #0F172A !important;
+    border: 1px solid #334155 !important;
+    border-radius: 12px !important;
+    color: white !important;
+    padding: 16px !important;
+    font-size: 1rem !important;
+    text-align: center !important;
+}
+.stTextInput input:focus {
+    border-color: #38BDF8 !important;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -197,7 +191,7 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
-# 3. Unified Authentication System (True Single Glass Card)
+# 3. Unified Authentication System (Rata Tengah Absolut)
 def check_password():
     def _submit():
         st.session_state["auth_ok"] = (
@@ -213,61 +207,29 @@ def check_password():
     note   = "Invalid credentials." if failed else "Enter your password to access the workspace."
 
     logo_b64 = get_base64_image("logo gsb.png")
-    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 160px; width: auto; object-fit: contain; margin-bottom: 24px; display: block; margin-left: auto; margin-right: auto; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));">' if logo_b64 else ''
+    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 160px; width: auto; object-fit: contain; margin-bottom: 24px;">' if logo_b64 else ''
 
-    # CSS Spesifik untuk menyulap kolom tengah Streamlit menjadi Kotak Login
-    st.markdown("""
-    <style>
-    /* Mengubah background layar login menjadi lebih gelap/berfokus */
-    .stApp {
-        background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%) !important;
-    }
-    
-    /* Menargetkan Kolom Tengah Streamlit secara presisi */
-    [data-testid="column"]:nth-of-type(2) {
-        background: rgba(15, 23, 42, 0.45) !important;
-        backdrop-filter: blur(24px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
-        border-radius: 32px !important;
-        padding: 48px !important;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6) !important;
-        text-align: center !important;
-        margin-top: 10vh !important;
-    }
-
-    /* Mempercantik Input Streamlit agar serasi dengan kotaknya */
-    .stTextInput input {
-        background-color: rgba(0, 0, 0, 0.4) !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        border-radius: 12px !important;
-        color: white !important;
-        padding: 16px !important;
-        font-size: 1rem !important;
-        text-align: center !important;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important;
-    }
-    .stTextInput input:focus {
-        border: 1px solid rgba(56, 189, 248, 0.6) !important;
-        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2) !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Render elemen login ke dalam kolom tengah
+    # Menggunakan kolom untuk memusatkan form secara vertikal dan horizontal
     _, mid, _ = st.columns([1, 1.2, 1])
     
     with mid:
-        # Teks dan logo diletakkan di dalam kolom yang sama dengan st.text_input
-        st.markdown(
-            f'{img_html}'
-            f'<h2 style="margin:0 0 8px;font-weight:800;font-size:2rem;color:#F8FAFC;letter-spacing:-0.03em;">{title}</h2>'
-            f'<p style="margin:0 0 32px;color:#94A3B8;font-size:1rem;">{note}</p>',
-            unsafe_allow_html=True,
-        )
+        # Spacer
+        st.markdown("<div style='margin-top: 15vh;'></div>", unsafe_allow_html=True)
+        
+        # Kotak Login dengan elemen yang dipaksa rata tengah (text-align: center)
+        st.markdown(f"""
+        <div style="background-color: #0F172A; border: 1px solid #1E293B; border-radius: 24px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center;">
+            {img_html}
+            <h2 style="margin:0 0 8px; font-weight:800; font-size:2.2rem; color:#F8FAFC; letter-spacing:-0.03em;">{title}</h2>
+            <p style="margin:0 0 32px; color:#94A3B8; font-size:1rem;">{note}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Input password ditarik ke atas agar masuk ke dalam ilusi kotak
+        st.markdown('<div style="margin-top:-90px; padding: 0 48px;">', unsafe_allow_html=True)
         st.text_input("pw", type="password", on_change=_submit, key="_pw",
                       label_visibility="collapsed", placeholder="Enter Password...")
+        st.markdown('</div>', unsafe_allow_html=True)
         
     return False
 
@@ -359,7 +321,7 @@ accum_net   = pajak_df["Net Revenue"].sum()
 # HEADER SECTION
 # ---------------------------------------------------------
 st.markdown(f"""
-<div class="header-container glass-panel">
+<div class="header-container">
     <div>
         <h1 class="header-title">GSB Workspace</h1>
         <p class="header-subtitle">Data Analytics Department &middot; Operations Dashboard</p>
@@ -394,30 +356,30 @@ with content_col:
         c1, c2 = st.columns(2)
         with c1:
             st.markdown(f"""
-            <div class="custom-metric-card glass-panel" style="margin-bottom: 24px;">
+            <div class="custom-metric-card" style="border-top: 4px solid #38BDF8 !important; margin-bottom: 24px;">
                 <div class="cmc-label">Incoming Clients</div>
                 <div class="cmc-value">{total_incoming}</div>
             </div>
             """, unsafe_allow_html=True)
             
-            warning_class = "warning" if total_pending < 0 else ""
+            val_color = "#EF4444" if total_pending < 0 else "#FFFFFF"
             st.markdown(f"""
-            <div class="custom-metric-card glass-panel">
+            <div class="custom-metric-card" style="border-top: 4px solid #F59E0B !important;">
                 <div class="cmc-label">Pending Clients</div>
-                <div class="cmc-value {warning_class}">{total_pending}</div>
+                <div class="cmc-value" style="color: {val_color} !important;">{total_pending}</div>
             </div>
             """, unsafe_allow_html=True)
             
         with c2:
             st.markdown(f"""
-            <div class="custom-metric-card glass-panel" style="margin-bottom: 24px;">
+            <div class="custom-metric-card" style="border-top: 4px solid #10B981 !important; margin-bottom: 24px;">
                 <div class="cmc-label">Completed Clients</div>
                 <div class="cmc-value">{total_completed}</div>
             </div>
             """, unsafe_allow_html=True)
             
             st.markdown(f"""
-            <div class="custom-metric-card glass-panel">
+            <div class="custom-metric-card" style="border-top: 4px solid #8B5CF6 !important;">
                 <div class="cmc-label">Base Revenue</div>
                 <div class="cmc-value">Rp {profit_completed:,.0f}</div>
                 <div class="cmc-caption">+ Rp {total_commitment:,.0f} (Commitment Fees)</div>
@@ -431,23 +393,23 @@ with content_col:
         t1, t2, t3 = st.columns(3)
         with t1:
             st.markdown(f"""
-            <div class="fin-card glass-panel">
-                <div class="cmc-label">Total Gross Accumulation</div>
-                <div class="cmc-value" style="font-size:1.6rem; color:#FFFFFF;">Rp {accum_gross:,.0f}</div>
+            <div class="custom-metric-card" style="border-top: 4px solid #94A3B8 !important;">
+                <div class="cmc-label">Total Gross</div>
+                <div class="cmc-value" style="font-size:1.6rem;">Rp {accum_gross:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
         with t2:
             st.markdown(f"""
-            <div class="fin-card glass-panel danger">
-                <div class="cmc-label" style="color: #FDA4AF;">Total Tax Liability</div>
-                <div class="cmc-value" style="font-size:1.6rem; color:#F43F5E;">Rp {accum_tax:,.0f}</div>
+            <div class="custom-metric-card" style="border-top: 4px solid #EF4444 !important; background-color: #1F111A !important;">
+                <div class="cmc-label" style="color: #FCA5A5 !important;">Tax Liability</div>
+                <div class="cmc-value" style="font-size:1.6rem; color:#F87171 !important;">Rp {accum_tax:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
         with t3:
             st.markdown(f"""
-            <div class="fin-card glass-panel success">
-                <div class="cmc-label" style="color: #6EE7B7;">Total Net Revenue</div>
-                <div class="cmc-value" style="font-size:1.6rem; color:#10B981;">Rp {accum_net:,.0f}</div>
+            <div class="custom-metric-card" style="border-top: 4px solid #10B981 !important; background-color: #0D1F1A !important;">
+                <div class="cmc-label" style="color: #6EE7B7 !important;">Net Revenue</div>
+                <div class="cmc-value" style="font-size:1.6rem; color:#34D399 !important;">Rp {accum_net:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -475,13 +437,13 @@ with content_col:
                 fig.update_traces(
                     textposition='inside', 
                     textinfo='percent+label', 
-                    marker=dict(line=dict(color='#0B0F19', width=3))
+                    marker=dict(line=dict(color='#070B14', width=3))
                 )
                 fig.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)', 
                     plot_bgcolor='rgba(0,0,0,0)', 
-                    # Memaksa Plotly menggunakan font Plus Jakarta Sans
-                    font=dict(color='#F8FAFC', family='Plus Jakarta Sans, sans-serif', size=14),
+                    # Memaksa font konsisten di Plotly
+                    font=dict(family='Plus Jakarta Sans', color='#F8FAFC', size=14),
                     margin=dict(t=0, b=0, l=0, r=0),
                     showlegend=False
                 )
@@ -548,8 +510,8 @@ with content_col:
                 fig2.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)',
                     plot_bgcolor='rgba(0,0,0,0)',
-                    # Memaksa Plotly menggunakan font Plus Jakarta Sans
-                    font=dict(color='#F8FAFC', family='Plus Jakarta Sans, sans-serif', size=13),
+                    # Memaksa font konsisten di Plotly
+                    font=dict(family='Plus Jakarta Sans', color='#F8FAFC', size=13),
                     yaxis={'categoryorder':'total ascending'},
                     margin=dict(t=0, b=0, l=0, r=0),
                     xaxis_title="Total Clients Handled",
@@ -557,8 +519,8 @@ with content_col:
                 )
                 
                 fig2.update_traces(
-                    marker_color='rgba(56, 189, 248, 0.85)', 
-                    marker_line_color='rgba(255, 255, 255, 0.3)', 
+                    marker_color='#38BDF8', 
+                    marker_line_color='#070B14', 
                     marker_line_width=1.5
                 )
                 st.plotly_chart(fig2, use_container_width=True)
