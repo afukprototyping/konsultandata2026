@@ -12,22 +12,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# 1. CSS Injection: Clean Modern, High Contrast, Solid Colors
+# 1. CSS Injection: Light Theme Glassmorphism (Orange, Blue, Green, Red)
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-/* Memaksa SEMUA elemen menggunakan Plus Jakarta Sans */
 * {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-/* Memaksa Background Berubah (Menimpa default Streamlit) */
+/* Background Soft White Gradient */
 .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
-    background-color: #070B14 !important;
-    background-image: 
-        radial-gradient(circle at 15% 50%, rgba(37, 99, 235, 0.08), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(147, 51, 234, 0.08), transparent 25%) !important;
+    background-color: #F8FAFC !important;
+    background-image: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%) !important;
     background-attachment: fixed !important;
 }
 
@@ -39,33 +36,32 @@ st.markdown("""
     max-width: 1240px !important;
 }
 
-/* Header Container */
+/* Header Container: Orange Gradient (Sesuai Gambar) */
 .header-container {
-    background-color: #0F172A !important;
-    border: 1px solid #1E293B !important;
-    border-radius: 16px;
+    background: linear-gradient(135deg, #F97316 0%, #DC2626 100%) !important;
+    border-radius: 12px;
     padding: 32px 40px;
     margin-bottom: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.4) !important;
 }
 .header-title {
     color: #FFFFFF !important;
     font-size: 2.25rem !important;
     font-weight: 800 !important;
     margin: 0 0 4px 0 !important;
-    letter-spacing: -0.03em !important;
+    letter-spacing: -0.02em !important;
 }
 .header-subtitle {
-    color: #94A3B8 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
     font-size: 0.95rem !important;
     margin: 0 !important;
     font-weight: 500 !important;
 }
 .header-kpi-label {
-    color: #94A3B8 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
     font-size: 0.75rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -74,7 +70,7 @@ st.markdown("""
     margin-bottom: 4px !important;
 }
 .header-kpi-value {
-    color: #38BDF8 !important;
+    color: #FFFFFF !important;
     font-size: 2.8rem !important;
     font-weight: 800 !important;
     line-height: 1 !important;
@@ -84,102 +80,123 @@ st.markdown("""
 
 /* Section Title */
 .section-title {
-    font-size: 1.25rem !important;
-    font-weight: 700 !important;
-    color: #F8FAFC !important;
-    margin-bottom: 24px !important;
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    margin-bottom: 20px !important;
     padding-bottom: 12px !important;
-    border-bottom: 2px solid #1E293B !important;
+    border-bottom: 2px solid #CBD5E1 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-/* Metric Cards Dasar */
-.custom-metric-card {
-    background-color: #111827 !important;
-    border: 1px solid #1F2937 !important;
+/* Base Glassmorphism Card (White) */
+.custom-metric-card, .fin-card {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
     border-radius: 16px !important;
     padding: 28px !important;
     height: 100% !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-    transition: transform 0.2s ease, border-color 0.2s ease !important;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
-.custom-metric-card:hover {
+.custom-metric-card:hover, .fin-card:hover {
     transform: translateY(-4px) !important;
-    border-color: #374151 !important;
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.1) !important;
 }
 .cmc-label {
-    color: #9CA3AF !important;
-    font-size: 0.85rem !important;
-    font-weight: 600 !important;
+    color: #64748B !important;
+    font-size: 0.80rem !important;
+    font-weight: 700 !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
     margin-bottom: 12px !important;
 }
 .cmc-value {
-    color: #F9FAFB !important;
+    color: #0F172A !important;
     font-size: 2.25rem !important;
     font-weight: 800 !important;
     line-height: 1.1 !important;
     letter-spacing: -0.03em !important;
 }
 .cmc-caption {
-    color: #6B7280 !important;
+    color: #64748B !important;
     font-size: 0.85rem !important;
     margin-top: 12px !important;
 }
 
+/* Semantic Glass Cards (+ and -) */
+.card-success {
+    background: rgba(209, 250, 229, 0.65) !important; /* Soft Green Glass */
+    border-color: rgba(167, 243, 208, 0.8) !important;
+}
+.card-success .cmc-label { color: #047857 !important; }
+.card-success .cmc-value { color: #059669 !important; }
+
+.card-danger {
+    background: rgba(254, 226, 226, 0.65) !important; /* Soft Red Glass */
+    border-color: rgba(254, 202, 202, 0.8) !important;
+}
+.card-danger .cmc-label { color: #B91C1C !important; }
+.card-danger .cmc-value { color: #DC2626 !important; }
+
 /* Streamlit DataFrame Override */
 .stDataFrame {
-    border: 1px solid #1E293B !important;
+    border: 1px solid rgba(15, 23, 42, 0.1) !important;
     border-radius: 12px !important;
     overflow: hidden !important;
+    background: white !important;
 }
 
-/* -----------------------------------------------------
-   Memaksa Menu Navigasi Sama Panjang & Kotak Rapi
--------------------------------------------------------- */
+/* Nav Menu Styles (Blue Accents) */
 div[data-testid="stRadio"] div[role="radiogroup"] {
     gap: 12px !important;
     width: 100% !important;
 }
 div[data-testid="stRadio"] div[role="radiogroup"] > label {
-    width: 100% !important; /* Memaksa panjang kotak konsisten */
+    width: 100% !important;
     display: block !important;
-    background-color: #0F172A !important;
-    border: 1px solid #1E293B !important;
-    border-radius: 12px !important;
-    padding: 16px 20px !important;
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 10px !important;
+    padding: 14px 20px !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
-    box-sizing: border-box !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02) !important;
 }
 div[data-testid="stRadio"] div[role="radiogroup"] > label:hover {
-    background-color: #1E293B !important;
-    border-color: #38BDF8 !important;
+    background-color: #0F172A !important; /* Deep Blue from image button */
 }
-/* Menyembunyikan bulatan asli radio button secara absolut */
+div[data-testid="stRadio"] div[role="radiogroup"] > label:hover p {
+    color: #FFFFFF !important;
+}
 div[data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child {
     display: none !important;
 }
 div[data-testid="stRadio"] div[data-testid="stMarkdownContainer"] p {
     font-size: 0.95rem !important;
-    font-weight: 600 !important;
-    color: #E2E8F0 !important;
+    font-weight: 700 !important;
+    color: #0F172A !important;
     margin: 0 !important;
+    transition: color 0.2s ease !important;
 }
 
 /* Input Fields Streamlit */
 .stTextInput input {
-    background-color: #0F172A !important;
-    border: 1px solid #334155 !important;
-    border-radius: 12px !important;
-    color: white !important;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 10px !important;
+    color: #0F172A !important;
     padding: 16px !important;
     font-size: 1rem !important;
     text-align: center !important;
 }
 .stTextInput input:focus {
-    border-color: #38BDF8 !important;
-    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2) !important;
+    border-color: #F97316 !important;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -191,7 +208,7 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
-# 3. Unified Authentication System (Rata Tengah Absolut)
+# 3. Unified Authentication System (Light Glassmorphism)
 def check_password():
     def _submit():
         st.session_state["auth_ok"] = (
@@ -203,29 +220,25 @@ def check_password():
         return True
 
     failed = st.session_state.get("auth_ok") is False
-    title  = "Access Denied" if failed else "Secure Login"
-    note   = "Invalid credentials." if failed else "Enter your password to access the workspace."
+    title  = "Secure Workspace" if not failed else "Access Denied"
+    note   = "Please enter your password to continue." if not failed else "Invalid credentials."
 
     logo_b64 = get_base64_image("logo gsb.png")
     img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height: 160px; width: auto; object-fit: contain; margin-bottom: 24px;">' if logo_b64 else ''
 
-    # Menggunakan kolom untuk memusatkan form secara vertikal dan horizontal
     _, mid, _ = st.columns([1, 1.2, 1])
     
     with mid:
-        # Spacer
         st.markdown("<div style='margin-top: 15vh;'></div>", unsafe_allow_html=True)
         
-        # Kotak Login dengan elemen yang dipaksa rata tengah (text-align: center)
         st.markdown(f"""
-        <div style="background-color: #0F172A; border: 1px solid #1E293B; border-radius: 24px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center;">
+        <div style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(24px); border: 1px solid #FFFFFF; border-radius: 24px; padding: 48px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center;">
             {img_html}
-            <h2 style="margin:0 0 8px; font-weight:800; font-size:2.2rem; color:#F8FAFC; letter-spacing:-0.03em;">{title}</h2>
-            <p style="margin:0 0 32px; color:#94A3B8; font-size:1rem;">{note}</p>
+            <h2 style="margin:0 0 8px; font-weight:800; font-size:2.2rem; color:#0F172A; letter-spacing:-0.03em;">{title}</h2>
+            <p style="margin:0 0 32px; color:#64748B; font-size:1rem;">{note}</p>
         </div>
         """, unsafe_allow_html=True)
         
-        # Input password ditarik ke atas agar masuk ke dalam ilusi kotak
         st.markdown('<div style="margin-top:-90px; padding: 0 48px;">', unsafe_allow_html=True)
         st.text_input("pw", type="password", on_change=_submit, key="_pw",
                       label_visibility="collapsed", placeholder="Enter Password...")
@@ -340,7 +353,7 @@ st.markdown(f"""
 content_col, menu_col = st.columns([3.5, 1], gap="large")
 
 with menu_col:
-    st.markdown('<div class="section-title" style="font-size: 1rem; border: none; margin-bottom: 8px;">Navigation</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title" style="border: none; margin-bottom: 8px;">Navigation</div>', unsafe_allow_html=True)
     selected_view = st.radio(
         "Select View:",
         ["Executive Summary", "Tax Liability", "Service Distribution", "Pending Clients", "Consultant Workload"],
@@ -356,30 +369,31 @@ with content_col:
         c1, c2 = st.columns(2)
         with c1:
             st.markdown(f"""
-            <div class="custom-metric-card" style="border-top: 4px solid #38BDF8 !important; margin-bottom: 24px;">
+            <div class="custom-metric-card" style="margin-bottom: 24px;">
                 <div class="cmc-label">Incoming Clients</div>
                 <div class="cmc-value">{total_incoming}</div>
             </div>
             """, unsafe_allow_html=True)
             
-            val_color = "#EF4444" if total_pending < 0 else "#FFFFFF"
+            # Semantic Card (Danger) if pending > 0
             st.markdown(f"""
-            <div class="custom-metric-card" style="border-top: 4px solid #F59E0B !important;">
+            <div class="custom-metric-card card-danger">
                 <div class="cmc-label">Pending Clients</div>
-                <div class="cmc-value" style="color: {val_color} !important;">{total_pending}</div>
+                <div class="cmc-value">{total_pending}</div>
             </div>
             """, unsafe_allow_html=True)
             
         with c2:
+            # Semantic Card (Success)
             st.markdown(f"""
-            <div class="custom-metric-card" style="border-top: 4px solid #10B981 !important; margin-bottom: 24px;">
+            <div class="custom-metric-card card-success" style="margin-bottom: 24px;">
                 <div class="cmc-label">Completed Clients</div>
                 <div class="cmc-value">{total_completed}</div>
             </div>
             """, unsafe_allow_html=True)
             
             st.markdown(f"""
-            <div class="custom-metric-card" style="border-top: 4px solid #8B5CF6 !important;">
+            <div class="custom-metric-card">
                 <div class="cmc-label">Base Revenue</div>
                 <div class="cmc-value">Rp {profit_completed:,.0f}</div>
                 <div class="cmc-caption">+ Rp {total_commitment:,.0f} (Commitment Fees)</div>
@@ -393,23 +407,23 @@ with content_col:
         t1, t2, t3 = st.columns(3)
         with t1:
             st.markdown(f"""
-            <div class="custom-metric-card" style="border-top: 4px solid #94A3B8 !important;">
-                <div class="cmc-label">Total Gross</div>
+            <div class="fin-card">
+                <div class="cmc-label">Total Gross Accumulation</div>
                 <div class="cmc-value" style="font-size:1.6rem;">Rp {accum_gross:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
         with t2:
             st.markdown(f"""
-            <div class="custom-metric-card" style="border-top: 4px solid #EF4444 !important; background-color: #1F111A !important;">
-                <div class="cmc-label" style="color: #FCA5A5 !important;">Tax Liability</div>
-                <div class="cmc-value" style="font-size:1.6rem; color:#F87171 !important;">Rp {accum_tax:,.0f}</div>
+            <div class="fin-card card-danger">
+                <div class="cmc-label">Total Tax Liability</div>
+                <div class="cmc-value" style="font-size:1.6rem;">Rp {accum_tax:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
         with t3:
             st.markdown(f"""
-            <div class="custom-metric-card" style="border-top: 4px solid #10B981 !important; background-color: #0D1F1A !important;">
-                <div class="cmc-label" style="color: #6EE7B7 !important;">Net Revenue</div>
-                <div class="cmc-value" style="font-size:1.6rem; color:#34D399 !important;">Rp {accum_net:,.0f}</div>
+            <div class="fin-card card-success">
+                <div class="cmc-label">Total Net Revenue</div>
+                <div class="cmc-value" style="font-size:1.6rem;">Rp {accum_net:,.0f}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -433,17 +447,18 @@ with content_col:
             with col_a:
                 st.dataframe(service_dist, use_container_width=True, hide_index=True)
             with col_b:
-                fig = px.pie(service_dist, values='Number of Clients', names='Service Type', hole=0.6)
+                # Menggunakan palet Oranye dan Biru
+                custom_colors = ['#EA580C', '#1D4ED8', '#F59E0B', '#3B82F6', '#93C5FD']
+                fig = px.pie(service_dist, values='Number of Clients', names='Service Type', hole=0.55, color_discrete_sequence=custom_colors)
                 fig.update_traces(
                     textposition='inside', 
                     textinfo='percent+label', 
-                    marker=dict(line=dict(color='#070B14', width=3))
+                    marker=dict(line=dict(color='#FFFFFF', width=2))
                 )
                 fig.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)', 
                     plot_bgcolor='rgba(0,0,0,0)', 
-                    # Memaksa font konsisten di Plotly
-                    font=dict(family='Plus Jakarta Sans', color='#F8FAFC', size=14),
+                    font=dict(family='Plus Jakarta Sans', color='#0F172A', size=13),
                     margin=dict(t=0, b=0, l=0, r=0),
                     showlegend=False
                 )
@@ -510,17 +525,17 @@ with content_col:
                 fig2.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)',
                     plot_bgcolor='rgba(0,0,0,0)',
-                    # Memaksa font konsisten di Plotly
-                    font=dict(family='Plus Jakarta Sans', color='#F8FAFC', size=13),
+                    font=dict(family='Plus Jakarta Sans', color='#0F172A', size=13),
                     yaxis={'categoryorder':'total ascending'},
                     margin=dict(t=0, b=0, l=0, r=0),
                     xaxis_title="Total Clients Handled",
                     yaxis_title=""
                 )
                 
+                # Menggunakan warna biru gelap (Navy) untuk bar chart
                 fig2.update_traces(
-                    marker_color='#38BDF8', 
-                    marker_line_color='#070B14', 
+                    marker_color='#1E3A8A', 
+                    marker_line_color='#FFFFFF', 
                     marker_line_width=1.5
                 )
                 st.plotly_chart(fig2, use_container_width=True)
