@@ -335,6 +335,7 @@ def load_data():
     col_nama  = _find_col(df1, "Nama Klien", "Nama")
     col_kon   = _find_col(df1, "Konsultan", "Konsultan")
     col_topik = _find_col(df2, "Materi Analisis", "Materi")
+    col_kon2  = _find_col(df2, "Nama Konsultan", "Konsultan")
 
     if not col_id or not col_nom:
         raise ValueError("Critical columns missing in SPS 2.")
@@ -349,11 +350,11 @@ def load_data():
     df1['Generated_ID'] = (df1[col_id1].astype(str).str.strip()
                            .str.replace(r"\.0$", "", regex=True).str.zfill(3))
 
-    return df1, df2, col_id, col_nom, col_layan, col_nama, col_kon, col_topik
+    return df1, df2, col_id, col_nom, col_layan, col_nama, col_kon, col_topik, col_kon2
 
 
 try:
-    df_in, df_done, C_ID, C_NOM, C_LAYAN, C_NAMA, C_KON, C_TOPIK = load_data()
+    df_in, df_done, C_ID, C_NOM, C_LAYAN, C_NAMA, C_KON, C_TOPIK, C_KON2 = load_data()
 except Exception as e:
     st.error(f"Failed to fetch data: {e}")
     st.stop()
@@ -511,12 +512,17 @@ col_a, col_b, col_c, col_d = st.columns([1.1, 1.1, 1.1, 1.5], gap="medium")
 # ── Consultant Workload ───────────────────────────────────────────────────────
 with col_a:
     cdf = pd.DataFrame({"Consultant": CONS_LIST, "N": 0})
-    if C_KON and C_KON in df_in.columns:
-        counts = (df_in[C_KON].astype(str).str.split(',')
+    if C_KON2 and C_KON2 in df_done.columns:
+        counts = (df_done[C_KON2].astype(str).str.split(r'[,;\n]+')
                   .explode().str.strip().value_counts().reset_index())
         counts.columns = ["Consultant", "Count"]
         for i, row in cdf.iterrows():
+            # Exact match first
             m = counts[counts['Consultant'].str.lower() == row['Consultant'].lower()]
+            if m.empty:
+                # Fallback: match by last name
+                last = row['Consultant'].split()[-1].lower()
+                m = counts[counts['Consultant'].str.lower().str.endswith(last)]
             if not m.empty:
                 cdf.at[i, 'N'] = int(m['Count'].values[0])
     cdf = cdf.sort_values('N', ascending=False).reset_index(drop=True)
