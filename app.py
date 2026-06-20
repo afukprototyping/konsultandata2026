@@ -326,7 +326,7 @@ def load_data():
     df1.columns = df1.columns.str.strip()
     df2.columns = df2.columns.str.strip()
 
-    df2 = df2.iloc[25:].reset_index(drop=True).copy()
+    df2 = df2.iloc[24:].reset_index(drop=True).copy()
 
     col_id    = _find_col(df2, "ID Klien (26.XXX)\nisi 3 angka belakang saja", "ID Klien")
     col_nom   = _find_col(df2, "Nominal yang diberikan", "Nominal")
