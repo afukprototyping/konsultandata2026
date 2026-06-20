@@ -12,7 +12,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Dark mode ─────────────────────────────────────────────────────────────────
 if 'dark_mode' not in st.session_state:
     st.session_state.dark_mode = False
 
@@ -21,7 +20,6 @@ is_dark = st.session_state.dark_mode
 def toggle_dark():
     st.session_state.dark_mode = not st.session_state.dark_mode
 
-# ── Theme tokens ──────────────────────────────────────────────────────────────
 if is_dark:
     APP_BG = "#0F172A"; CARD_BG = "rgba(30,41,59,0.95)"; CARD_BD = "rgba(51,65,85,0.8)"
     T1 = "#F1F5F9"; T2 = "#94A3B8"; TH = "#1E293B"; TB = "#334155"; PB = "#334155"
@@ -31,10 +29,9 @@ else:
     T1 = "#0F172A"; T2 = "#64748B"; TH = "#F1F5F9"; TB = "#E2E8F0"; PB = "#E2E8F0"
     BD_BG = "#F1F5F9"; BD_C = "#475569"
 
-# ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 * {{ font-family: 'Plus Jakarta Sans', sans-serif !important; }}
 .stApp {{
     background-color: {APP_BG} !important;
@@ -46,27 +43,31 @@ st.markdown(f"""
 #MainMenu,footer,header {{ visibility:hidden; }}
 .block-container {{ padding-top:1rem !important; padding-bottom:1rem !important; max-width:1400px !important; }}
 
-.mc {{ background:{CARD_BG}; backdrop-filter:blur(12px); border:1px solid {CARD_BD};
-       border-top:4px solid #1E3A8A; border-radius:10px; padding:16px; height:100%;
-       box-shadow:0 2px 8px rgba(0,0,0,0.04); transition:transform 0.2s; }}
+/* METRIC CARDS — fixed min-height so all equal */
+.mc {{
+    background:{CARD_BG}; backdrop-filter:blur(12px);
+    border:1px solid {CARD_BD}; border-top:4px solid #1E3A8A;
+    border-radius:10px; padding:18px 16px;
+    min-height:130px; height:100%;
+    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+    display:flex; flex-direction:column; justify-content:center;
+    transition:transform 0.2s;
+}}
 .mc:hover {{ transform:translateY(-2px); }}
-.mc.g {{ border-top-color:#10B981; }} .mc.r {{ border-top-color:#DC2626; }}
-.ml {{ color:{T2}; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }}
+.mc.g {{ border-top-color:#10B981; }}
+.mc.r {{ border-top-color:#DC2626; }}
+.ml {{ color:{T2}; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }}
 .mv {{ color:{T1}; font-size:1.55rem; font-weight:800; line-height:1.1; }}
+.mv-center {{ color:{T1}; font-size:2.2rem; font-weight:800; line-height:1; text-align:center; margin:8px 0; }}
 .pb {{ background:{PB}; border-radius:999px; height:6px; overflow:hidden; margin:10px 0 4px; }}
 .pf {{ height:100%; background:#10B981; border-radius:999px; }}
 .pl {{ color:{T2}; font-size:0.68rem; font-weight:600; }}
 
-.sc {{ background:{CARD_BG}; border:1px solid {CARD_BD}; border-radius:12px; padding:20px;
-       box-shadow:0 2px 8px rgba(0,0,0,0.04); }}
-.sh {{ font-size:0.75rem; font-weight:800; color:#EA580C; margin-bottom:14px;
-       text-transform:uppercase; letter-spacing:0.08em;
-       display:flex; justify-content:space-between; align-items:center; }}
+.sc {{ background:{CARD_BG}; border:1px solid {CARD_BD}; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.04); }}
+.sh {{ font-size:0.75rem; font-weight:800; color:#EA580C; margin-bottom:14px; text-transform:uppercase; letter-spacing:0.08em; display:flex; justify-content:space-between; align-items:center; }}
 
 .ct {{ width:100%; border-collapse:collapse; font-size:0.84rem; }}
-.ct thead th {{ background:{TH}; color:{T2}; font-size:0.66rem; font-weight:700;
-                text-transform:uppercase; letter-spacing:0.06em;
-                padding:9px 12px; text-align:left; border-bottom:1px solid {TB}; }}
+.ct thead th {{ background:{TH}; color:{T2}; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:9px 12px; text-align:left; border-bottom:1px solid {TB}; }}
 .ct tbody tr {{ border-bottom:1px solid {TB}; }}
 .ct tbody td {{ padding:9px 12px; color:{T1}; vertical-align:middle; }}
 
@@ -75,23 +76,58 @@ st.markdown(f"""
 .cb {{ width:70px; height:4px; background:{PB}; border-radius:999px; overflow:hidden; flex-shrink:0; }}
 .cf {{ height:100%; background:linear-gradient(90deg,#F97316,#C2410C); border-radius:999px; }}
 .cnum {{ font-weight:800; color:{T1}; font-size:0.88rem; min-width:18px; text-align:right; }}
+.czero {{ color:{T2}; font-weight:400; font-style:italic; font-size:0.8rem; }}
 
 .bdg {{ display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.72rem; font-weight:700; }}
 .ba {{ background:#CCFBF1; color:#0F766E; }} .bk {{ background:#EDE9FE; color:#6D28D9; }}
 .bp {{ background:#FEF9C3; color:#92400E; }} .bd {{ background:{BD_BG}; color:{BD_C}; }}
 .pc {{ background:#FEE2E2; color:#DC2626; padding:3px 10px; border-radius:999px; font-size:0.72rem; font-weight:700; }}
 
-.login-box {{ background:rgba(255,255,255,0.8); backdrop-filter:blur(16px);
-              border:1px solid rgba(255,255,255,0.9); border-top:6px solid #E8500A;
-              border-radius:16px; padding:40px;
-              box-shadow:0 20px 40px -10px rgba(232,80,10,0.15); text-align:center; }}
-.stTextInput input {{ background-color:rgba(248,250,252,0.8) !important;
-                      border:1px solid #CBD5E1 !important; border-radius:8px !important;
-                      color:#0F172A !important; padding:14px !important; text-align:center !important; }}
+/* LOGIN */
+.login-box {{
+    background:rgba(255,255,255,0.92); backdrop-filter:blur(16px);
+    border:1px solid rgba(226,232,240,0.9); border-top:6px solid #E8500A;
+    border-radius:16px; padding:40px 40px 32px;
+    box-shadow:0 20px 40px -10px rgba(232,80,10,0.12); text-align:center;
+}}
+.stTextInput input {{
+    background-color:rgba(248,250,252,0.9) !important;
+    border:1px solid #CBD5E1 !important; border-radius:8px !important;
+    color:#0F172A !important; padding:14px !important; text-align:center !important;
+    font-size:1rem !important;
+}}
+/* Style the login button */
+div[data-testid="stForm"] button, .login-btn button {{
+    background: linear-gradient(135deg, #F97316, #EA580C) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    width: 100% !important;
+    cursor: pointer !important;
+}}
+/* Dark mode toggle button styles */
+.dm-btn button {{
+    background: rgba(255,255,255,0.15) !important;
+    color: white !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+}}
+.lm-btn button {{
+    background: #FEF3C7 !important;
+    color: #92400E !important;
+    border: 1px solid #FCD34D !important;
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
 def get_b64(path):
     if os.path.exists(path):
         with open(path, "rb") as f:
@@ -111,20 +147,34 @@ def check_password():
     def _submit():
         st.session_state["auth_ok"] = (st.session_state["_pw"] == st.secrets["APP_PASSWORD"])
         del st.session_state["_pw"]
+
     if st.session_state.get("auth_ok"):
         return True
+
     logo_b64 = get_b64("logo gsb.png")
-    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height:90px;width:auto;margin-bottom:24px;">' if logo_b64 else ''
+    img_html = f'<img src="data:image/png;base64,{logo_b64}" style="max-height:80px;width:auto;margin-bottom:20px;">' if logo_b64 else ''
+
     _, mid, _ = st.columns([1, 1.2, 1])
     with mid:
-        st.markdown("<div style='margin-top:15vh;'></div>", unsafe_allow_html=True)
-        st.markdown(f"""<div class="login-box">{img_html}
-            <h2 style="margin:0 0 4px;font-weight:800;font-size:1.6rem;color:#1E3A8A;">GSB Data Consulting</h2>
-            <p style="margin:0 0 24px;color:#64748B;font-size:0.9rem;">Authentication Required</p>
-        </div>""", unsafe_allow_html=True)
-        st.markdown('<div style="margin-top:-70px;padding:0 40px;">', unsafe_allow_html=True)
-        st.text_input("pw", type="password", on_change=_submit, key="_pw",
-                      label_visibility="collapsed", placeholder="Enter Password...")
+        st.markdown("<div style='margin-top:12vh;'></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="login-box">
+            {img_html}
+            <h2 style="margin:0 0 4px;font-weight:800;font-size:1.5rem;color:#1E3A8A;">GSB Data Consulting</h2>
+            <p style="margin:0 0 24px;color:#64748B;font-size:0.88rem;">Authentication Required</p>
+        </div>
+        """, unsafe_allow_html=True)
+        # Input + button inside form (negative margin pulls it into the white box)
+        st.markdown('<div style="margin-top:-56px;padding:0 40px 0 40px;">', unsafe_allow_html=True)
+        with st.form("login_form"):
+            st.text_input("pw", type="password", key="_pw",
+                          label_visibility="collapsed", placeholder="Enter password...")
+            st.markdown('<div class="login-btn">', unsafe_allow_html=True)
+            submitted = st.form_submit_button("Login →", use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+            if submitted:
+                _submit()
+                st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
     return False
 
@@ -197,7 +247,7 @@ tax_t   = tax_df["Tax"].sum()
 net_t   = tax_df["Net"].sum()
 
 # ── Header ────────────────────────────────────────────────────────────────────
-logo_b64 = get_b64("logo gsb.png")
+logo_b64  = get_b64("logo gsb.png")
 logo_html = f'<img src="data:image/png;base64,{logo_b64}" style="height:50px;border-radius:50%;margin-right:14px;">' if logo_b64 else ''
 
 hdr_col, btn_col = st.columns([6, 1])
@@ -209,18 +259,22 @@ with hdr_col:
          box-shadow:0 8px 24px rgba(234,88,12,0.22);">
         <div style="display:flex; align-items:center;">
             {logo_html}
-            <div style="display:flex; flex-direction:column; justify-content:center; gap:4px;">
+            <div style="display:flex; flex-direction:column; gap:4px;">
                 <div style="color:#fff; font-size:1.55rem; font-weight:800; line-height:1.2; letter-spacing:-0.02em;">
                     GSB Data Consulting Services</div>
                 <div style="color:rgba(255,255,255,0.88); font-size:0.78rem; font-weight:700;
                      text-transform:uppercase; letter-spacing:0.09em;">Department of Data Analytics</div>
             </div>
         </div>
-        <div style="border-left:2px solid rgba(255,255,255,0.25); padding-left:28px;">
-            <div style="color:rgba(255,255,255,0.88); font-size:0.68rem; font-weight:700;
+        <div style="border-left:2px solid rgba(255,255,255,0.25); padding-left:20px; margin-left:8px;">
+            <div style="color:rgba(255,255,255,0.85); font-size:0.68rem; font-weight:700;
                  text-transform:uppercase; letter-spacing:0.09em; margin-bottom:2px;">Total Estimated Value</div>
-            <div style="color:#fff; font-size:2rem; font-weight:800; line-height:1; letter-spacing:-0.02em;">
-                Rp {valuation:,.0f}</div>
+            <div style="display:flex; align-items:baseline; gap:8px;">
+                <div style="color:#fff; font-size:2rem; font-weight:800; line-height:1; letter-spacing:-0.02em;">
+                    Rp {valuation:,.0f}</div>
+                <div style="color:rgba(255,255,255,0.6); font-size:0.72rem; font-weight:300; letter-spacing:0.02em;">
+                    after adm</div>
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -228,33 +282,43 @@ with hdr_col:
 with btn_col:
     st.markdown("<div style='height:24px;'></div>", unsafe_allow_html=True)
     dm_lbl = "☀️ Light Mode" if is_dark else "🌙 Dark Mode"
+    btn_class = "lm-btn" if is_dark else "dm-btn"
+    st.markdown(f'<div class="{btn_class}">', unsafe_allow_html=True)
     st.button(dm_lbl, on_click=toggle_dark, key="dm", use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top:16px;'></div>", unsafe_allow_html=True)
 
 # ── Metric Cards ──────────────────────────────────────────────────────────────
 c1, c2, c3, c4, c5 = st.columns(5)
 with c1:
-    st.markdown(f"""<div class="mc"><div class="ml">Gross Revenue Before Tax</div>
+    st.markdown(f"""<div class="mc">
+    <div class="ml">Gross Revenue Before Tax</div>
     <div class="mv">Rp {gross_t:,.0f}</div></div>""", unsafe_allow_html=True)
 with c2:
-    st.markdown(f"""<div class="mc g"><div class="ml" style="color:#10B981;">Total Net Revenue</div>
+    st.markdown(f"""<div class="mc g">
+    <div class="ml" style="color:#10B981;">Total Net Revenue</div>
     <div class="mv" style="color:#10B981;">Rp {net_t:,.0f}</div></div>""", unsafe_allow_html=True)
 with c3:
-    st.markdown(f"""<div class="mc r"><div class="ml" style="color:#DC2626;">Total Tax Liability</div>
+    st.markdown(f"""<div class="mc r">
+    <div class="ml" style="color:#DC2626;">Total Tax Liability</div>
     <div class="mv" style="color:#DC2626;">Rp {tax_t:,.0f}</div></div>""", unsafe_allow_html=True)
 with c4:
     st.markdown(f"""<div class="mc g">
     <div class="ml" style="color:#10B981;">Completed Clients</div>
-    <div class="mv" style="color:#10B981;">{n_done} <span style="font-size:0.8rem;color:{T2};font-weight:600;">/ {n_in}</span></div>
+    <div class="mv-center" style="color:#10B981;">{n_done}
+        <span style="font-size:1rem;color:{T2};font-weight:600;">/ {n_in}</span>
+    </div>
     <div class="pb"><div class="pf" style="width:{pct_done}%;"></div></div>
-    <div class="pl">{pct_done}% completion rate</div>
+    <div class="pl" style="text-align:center;">{pct_done}% completion rate</div>
     </div>""", unsafe_allow_html=True)
 with c5:
     ac = "#DC2626" if n_pend > 0 else "#10B981"
     cc = "r" if n_pend > 0 else "g"
-    st.markdown(f"""<div class="mc {cc}"><div class="ml" style="color:{ac};">Pending Clients</div>
-    <div class="mv" style="color:{ac};">{n_pend}</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="mc {cc}">
+    <div class="ml" style="color:{ac};">Pending Clients</div>
+    <div class="mv-center" style="color:{ac}; margin-top:12px;">{n_pend}</div>
+    </div>""", unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
 
@@ -271,7 +335,7 @@ CONS_LIST = [
 
 col_a, col_b, col_c, col_d = st.columns([1.1, 1.1, 1.1, 1.5], gap="medium")
 
-# Consultant Workload
+# ── Consultant Workload ───────────────────────────────────────────────────────
 with col_a:
     cdf = pd.DataFrame({"Consultant": CONS_LIST, "N": 0})
     if C_KON and C_KON in df_in.columns:
@@ -281,28 +345,37 @@ with col_a:
         for i, row in cdf.iterrows():
             m = counts[counts['Consultant'].str.lower() == row['Consultant'].lower()]
             if not m.empty: cdf.at[i,'N'] = int(m['Count'].values[0])
-    cdf = cdf[cdf['N'] > 0].sort_values('N', ascending=False).reset_index(drop=True)
-    mx = cdf['N'].max() if len(cdf) else 1
+    cdf = cdf.sort_values('N', ascending=False).reset_index(drop=True)
+    mx = cdf['N'].max() if cdf['N'].max() > 0 else 1
 
-    rows_html = "".join(f"""<tr><td><div class="cr">
-        <span class="cn">{r['Consultant']}</span>
-        <div class="cb"><div class="cf" style="width:{int(r['N']/mx*100)}%;"></div></div>
-        <span class="cnum">{int(r['N'])}</span>
-    </div></td></tr>""" for _, r in cdf.iterrows())
+    rows_html = ""
+    for _, r in cdf.iterrows():
+        if r['N'] > 0:
+            pct_bar = int(r['N'] / mx * 100)
+            rows_html += f"""<tr><td><div class="cr">
+                <span class="cn">{r['Consultant']}</span>
+                <div class="cb"><div class="cf" style="width:{pct_bar}%;"></div></div>
+                <span class="cnum">{int(r['N'])}</span>
+            </div></td></tr>"""
+        else:
+            rows_html += f"""<tr><td><div class="cr">
+                <span class="cn">{r['Consultant']}</span>
+                <span class="czero">— 0 klien</span>
+            </div></td></tr>"""
 
     st.markdown(f"""<div class="sc" style="max-height:{MH}px;overflow-y:auto;">
         <div class="sh">Consultant Workload</div>
         <table class="ct"><thead><tr><th>Consultant</th></tr></thead>
         <tbody>{rows_html}</tbody></table></div>""", unsafe_allow_html=True)
 
-# Service Distribution
+# ── Service Distribution ──────────────────────────────────────────────────────
 with col_b:
     st.markdown('<div class="sc">', unsafe_allow_html=True)
     st.markdown('<div class="sh">Service Distribution</div>', unsafe_allow_html=True)
     if C_LAYAN and C_LAYAN in df_in.columns:
         svc = df_in[C_LAYAN].value_counts().reset_index()
         svc.columns = ["Service","Qty"]
-        colors = ["#6D28D9","#0F766E","#92400E","#1E3A8A","#DC2626"]
+        colors = ["#7C3AED","#059669","#F59E0B","#3B82F6","#EF4444"]
         fig = go.Figure(go.Pie(
             labels=svc["Service"], values=svc["Qty"], hole=0.62,
             marker=dict(colors=colors[:len(svc)], line=dict(color='rgba(0,0,0,0)',width=0)),
@@ -335,7 +408,7 @@ with col_b:
         st.warning("N/A")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Topic Distribution
+# ── Topic Distribution ────────────────────────────────────────────────────────
 with col_c:
     t_rows = ""
     if C_TOPIK and C_TOPIK in df_done.columns:
@@ -353,7 +426,7 @@ with col_c:
         <tbody>{t_rows or f'<tr><td colspan="2" style="text-align:center;color:{T2};padding:20px;">No data</td></tr>'}</tbody>
         </table></div>""", unsafe_allow_html=True)
 
-# Pending Clients Roster
+# ── Pending Clients Roster ────────────────────────────────────────────────────
 with col_d:
     pend_df = df_in[pend_mask].copy()
     p_rows  = ""
@@ -368,12 +441,12 @@ with col_d:
             <td>{mk_badge(sv_v)}</td>
             <td style="color:{T2};font-size:0.79rem;">{kn_v}</td></tr>"""
 
-    chip  = f'<span class="pc">{n_pend} pending</span>' if n_pend > 0 \
-            else '<span style="color:#10B981;font-size:0.75rem;font-weight:700;">✓ All clear</span>'
-    body  = f"""<table class="ct"><thead>
-                <tr><th>ID</th><th>Client</th><th>Service</th><th>Consultant</th></tr>
-                </thead><tbody>{p_rows}</tbody></table>""" if not pend_df.empty \
-            else f"<p style='text-align:center;color:#10B981;font-weight:600;padding:20px 0;'>✓ All clients processed.</p>"
+    chip = f'<span class="pc">{n_pend} pending</span>' if n_pend > 0 \
+           else '<span style="color:#10B981;font-size:0.75rem;font-weight:700;">✓ All clear</span>'
+    body = f"""<table class="ct"><thead>
+               <tr><th>ID</th><th>Client</th><th>Service</th><th>Consultant</th></tr>
+               </thead><tbody>{p_rows}</tbody></table>""" if not pend_df.empty \
+           else f"<p style='text-align:center;color:#10B981;font-weight:600;padding:20px 0;'>✓ All clients processed.</p>"
 
     st.markdown(f"""<div class="sc" style="max-height:{MH}px;overflow-y:auto;">
         <div class="sh">Pending Clients Roster {chip}</div>
