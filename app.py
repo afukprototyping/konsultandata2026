@@ -17,9 +17,6 @@ if 'dark_mode' not in st.session_state:
 
 is_dark = st.session_state.dark_mode
 
-def toggle_dark():
-    st.session_state.dark_mode = not st.session_state.dark_mode
-
 if is_dark:
     APP_BG  = "#0F172A"
     CARD_BG = "rgba(30,41,59,0.95)"
@@ -38,7 +35,15 @@ else:
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-* {{ font-family: 'Plus Jakarta Sans', sans-serif !important; }}
+
+/* Base font — but DON'T override Material icon ligatures (fixes broken eye icon) */
+*:not([class*="material-symbols"]):not([data-testid="stIconMaterial"]) {{
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}}
+[data-testid="stIconMaterial"],
+span[class*="material-symbols"] {{
+    font-family: 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
+}}
 
 .stApp {{
     background-color: {APP_BG} !important;
@@ -77,6 +82,12 @@ button[data-testid="stTextInputPasswordToggle"] {{
 button[data-testid="stTextInputPasswordToggle"] svg {{
     width: 18px !important;
     height: 18px !important;
+}}
+/* Keep Material icon inside the toggle rendering as an icon, not text */
+button[data-testid="stTextInputPasswordToggle"] span {{
+    font-family: 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
+    font-size: 18px !important;
+    color: {T2} !important;
 }}
 
 .login-box {{
@@ -432,16 +443,13 @@ with hdr_col:
 with btn_col:
     # Align button vertically with the header box
     st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
-    if is_dark:
-        st.markdown('<div class="lm-btn">', unsafe_allow_html=True)
-        st.button("☀️ Light Mode", on_click=toggle_dark, key="dm",
-                  use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="dm-btn">', unsafe_allow_html=True)
-        st.button("🌙 Dark Mode", on_click=toggle_dark, key="dm",
-                  use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+    label = "☀️ Light Mode" if is_dark else "🌙 Dark Mode"
+    wrap  = "lm-btn" if is_dark else "dm-btn"
+    st.markdown(f'<div class="{wrap}">', unsafe_allow_html=True)
+    if st.button(label, key="dm", use_container_width=True):
+        st.session_state.dark_mode = not st.session_state.dark_mode
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top:16px;'></div>", unsafe_allow_html=True)
 
