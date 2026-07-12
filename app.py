@@ -23,6 +23,7 @@ if is_dark:
     T1 = "#F1F5F9"; T2 = "#94A3B8"
     TH = "#1E293B"; TB = "#334155"; PB = "#334155"
     BD_BG = "#1E293B"; BD_C = "#94A3B8"
+    RL = "transparent"
 else:
     APP_BG  = "#F8FAFC"
     CARD_BG = "rgba(255,255,255,0.92)"
@@ -30,6 +31,7 @@ else:
     T1 = "#0F172A"; T2 = "#64748B"
     TH = "#F1F5F9"; TB = "#E2E8F0"; PB = "#E2E8F0"
     BD_BG = "#F1F5F9"; BD_C = "#475569"
+    RL = "#E2E8F0"
 
 st.markdown(f"""
 <style>
@@ -125,7 +127,6 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     line-height: 1 !important;
     margin-bottom: 0 !important;
 }}
-/* rapetin 2 tombol mode biar sejajar & center sama bar oranye */
 div[data-testid="stVerticalBlock"]:has(> .st-key-mode_light) {{
     gap: 0.4rem !important;
     height: 100% !important;
@@ -223,9 +224,9 @@ div[data-testid="stVerticalBlock"]:has(> .st-key-mode_light) {{
     letter-spacing: 0.04em;
     padding: 8px 10px;
     text-align: left;
-    border-bottom: 1px solid {TB};
+    border-bottom: 1px solid {RL};
 }}
-.ct tbody tr {{ border-bottom: 1px solid {TB}; }}
+.ct tbody tr {{ border-bottom: 1px solid {RL}; }}
 .ct tbody td {{ padding: 8px 10px; color: {T1}; vertical-align: middle; }}
 
 .rt {{ table-layout: fixed; }}
@@ -547,7 +548,7 @@ CONS_LIST = [
     "Muhammad Shira Pramudita", "Nabeel Muhammad Diaz",
 ]
 
-col_a, col_b, col_c, col_d = st.columns([1.1, 1.1, 1.1, 2.2], gap="medium")
+col_a, col_b, col_c, col_d = st.columns([1.1, 1.1, 1.1, 2.7], gap="small")
 
 
 with col_a:
@@ -624,7 +625,7 @@ with col_b:
             pc = round(r["Qty"] / n_in * 100) if n_in else 0
             legend += (
                 f'<div style="display:flex;align-items:center;justify-content:space-between;'
-                f'padding:5px 0;border-bottom:1px solid {TB};">'
+                f'padding:5px 0;border-bottom:1px solid {RL};">'
                 f'<div style="display:flex;align-items:center;gap:8px;">'
                 f'<div style="width:9px;height:9px;border-radius:50%;background:{color};flex-shrink:0;"></div>'
                 f'<span style="color:{T1};font-size:0.8rem;font-weight:500;">{r["Service"]}</span></div>'
