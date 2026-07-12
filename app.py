@@ -56,16 +56,14 @@ span[class*="material-symbols"] {{
 [data-testid="stHeader"] {{ background: transparent !important; }}
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
+    padding-top: 0.6rem !important;
+    padding-bottom: 0.6rem !important;
     max-width: 1400px !important;
 }}
 
 /* ── LOGIN ─────────────────────────────────────────────────────── */
-/* Hide "Press Enter to submit form" hint */
 [data-testid="InputInstructions"] {{ display: none !important; }}
 
-/* Password eye button — small icon only */
 button[data-testid="stTextInputPasswordToggle"] {{
     width: 36px !important;
     min-width: 36px !important;
@@ -83,7 +81,6 @@ button[data-testid="stTextInputPasswordToggle"] svg {{
     width: 18px !important;
     height: 18px !important;
 }}
-/* Keep Material icon inside the toggle rendering as an icon, not text */
 button[data-testid="stTextInputPasswordToggle"] span {{
     font-family: 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
     font-size: 18px !important;
@@ -109,7 +106,6 @@ button[data-testid="stTextInputPasswordToggle"] span {{
     text-align: center !important;
     font-size: 1rem !important;
 }}
-/* Login submit button */
 div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     background: linear-gradient(135deg, #F97316, #EA580C) !important;
     color: white !important;
@@ -123,36 +119,37 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     letter-spacing: 0.02em !important;
 }}
 
-/* ── DARK / LIGHT MODE BUTTONS ─────────────────────────────────── */
-/* Dark Mode button (shown in light mode) — dark */
-.dm-btn button {{
-    background: rgba(15,23,42,0.85) !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.15) !important;
-    border-radius: 20px !important;
-    font-weight: 600 !important;
-    font-size: 0.82rem !important;
+/* ── DARK / LIGHT MODE ICON BUTTONS (2 tombol vertikal) ────────── */
+.mbtn-on button, .mbtn-off button,
+.st-key-light_btn button, .st-key-dark_btn button {{
+    padding: 4px 0 !important;
+    min-height: 0 !important;
+    height: 34px !important;
+    border-radius: 10px !important;
+    font-size: 1.05rem !important;
+    line-height: 1 !important;
+    margin-bottom: 3px !important;
 }}
-/* Light Mode button (shown in dark mode) — bright yellow */
-.lm-btn button {{
-    background: linear-gradient(135deg, #FEF3C7, #FCD34D) !important;
-    color: #78350F !important;
-    border: 2px solid #F59E0B !important;
-    border-radius: 20px !important;
-    font-weight: 700 !important;
-    font-size: 0.82rem !important;
-    box-shadow: 0 2px 10px rgba(245,158,11,0.45) !important;
+.mbtn-on button {{
+    background: linear-gradient(135deg,#F97316,#EA580C) !important;
+    border: 1px solid #EA580C !important;
+    box-shadow: 0 2px 8px rgba(234,88,12,0.30) !important;
+}}
+.mbtn-off button {{
+    background: rgba(148,163,184,0.18) !important;
+    border: 1px solid rgba(148,163,184,0.35) !important;
+    opacity: 0.55 !important;
 }}
 
-/* ── METRIC CARDS ──────────────────────────────────────────────── */
+/* ── METRIC CARDS (compact) ────────────────────────────────────── */
 .mc {{
     background: {CARD_BG};
     backdrop-filter: blur(12px);
     border: 1px solid {CARD_BD};
     border-top: 4px solid #1E3A8A;
     border-radius: 10px;
-    padding: 24px 20px;
-    min-height: 175px;
+    padding: 14px 14px;
+    min-height: 118px;
     height: 100%;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     display: flex;
@@ -163,88 +160,96 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
 .mc:hover {{ transform: translateY(-2px); }}
 .mc.g {{ border-top-color: #10B981; }}
 .mc.r {{ border-top-color: #DC2626; }}
+.mc.a {{ border-top-color: #F59E0B; }}
+.mc.k {{ border-top-color: #64748B; }}
 .ml {{
     color: {T2};
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    line-height: 1.2;
 }}
 .mv {{
     color: {T1};
-    font-size: 1.65rem;
+    font-size: 1.25rem;
     font-weight: 800;
     line-height: 1.1;
+    white-space: nowrap;
 }}
 .mv-center {{
     color: {T1};
-    font-size: 2.4rem;
+    font-size: 1.8rem;
     font-weight: 800;
     line-height: 1;
     text-align: center;
-    margin: 8px 0;
+    margin: 4px 0;
 }}
-.pb {{ background: {PB}; border-radius: 999px; height: 6px; overflow: hidden; margin: 12px 0 5px; }}
+.pb {{ background: {PB}; border-radius: 999px; height: 5px; overflow: hidden; margin: 9px 0 4px; }}
 .pf {{ height: 100%; background: #10B981; border-radius: 999px; }}
-.pl {{ color: {T2}; font-size: 0.72rem; font-weight: 600; text-align: center; }}
+.pl {{ color: {T2}; font-size: 0.68rem; font-weight: 600; text-align: center; }}
 
-/* ── SECTION CARDS (pure HTML tables) ─────────────────────────── */
+/* ── SECTION CARDS ─────────────────────────────────────────────── */
 .sc {{
     background: {CARD_BG};
     border: 1px solid {CARD_BD};
     border-radius: 12px;
-    padding: 20px;
+    padding: 14px 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }}
 .sh {{
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 800;
     color: #EA580C;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.07em;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }}
-.ct {{ width: 100%; border-collapse: collapse; font-size: 0.84rem; }}
+.ct {{ width: 100%; border-collapse: collapse; font-size: 0.82rem; }}
 .ct thead th {{
     background: {TH};
     color: {T2};
-    font-size: 0.66rem;
+    font-size: 0.64rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 9px 12px;
+    letter-spacing: 0.05em;
+    padding: 8px 10px;
     text-align: left;
     border-bottom: 1px solid {TB};
 }}
 .ct tbody tr {{ border-bottom: 1px solid {TB}; }}
-.ct tbody td {{ padding: 9px 12px; color: {T1}; vertical-align: middle; }}
+.ct tbody td {{ padding: 8px 10px; color: {T1}; vertical-align: middle; }}
+
+/* roster table — fixed layout so it fits WITHOUT horizontal scroll */
+.rt {{ table-layout: fixed; }}
+.rt th, .rt td {{ word-break: break-word; white-space: normal; }}
 
 .cr {{ display: flex; align-items: center; gap: 8px; }}
-.cn {{ flex: 1; color: {T1}; font-weight: 600; font-size: 0.83rem; }}
+.cn {{ flex: 1; color: {T1}; font-weight: 600; font-size: 0.82rem; }}
 .cb {{ width: 70px; height: 4px; background: {PB}; border-radius: 999px; overflow: hidden; flex-shrink: 0; }}
 .cf {{ height: 100%; background: linear-gradient(90deg,#F97316,#C2410C); border-radius: 999px; }}
-.cnum {{ font-weight: 800; color: {T1}; font-size: 0.88rem; min-width: 18px; text-align: right; }}
-.czero {{ color: {T2}; font-weight: 400; font-style: italic; font-size: 0.8rem; }}
+.cnum {{ font-weight: 800; color: {T1}; font-size: 0.86rem; min-width: 18px; text-align: right; }}
+.czero {{ color: {T2}; font-weight: 400; font-style: italic; font-size: 0.78rem; }}
 
-.bdg {{ display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }}
+.bdg {{ display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; }}
 .ba {{ background: #CCFBF1; color: #0F766E; }}
 .bk {{ background: #EDE9FE; color: #6D28D9; }}
 .bp {{ background: #FEF9C3; color: #92400E; }}
 .bd {{ background: {BD_BG}; color: {BD_C}; }}
-.pc {{ background: #FEE2E2; color: #DC2626; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }}
 
-/* ── SERVICE DISTRIBUTION — style Streamlit border container ───── */
-[data-testid="stVerticalBlockBorderWrapper"] {{
-    background: {CARD_BG} !important;
-    border: 1px solid {CARD_BD} !important;
-    border-radius: 12px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
-    padding: 16px 20px !important;
-}}
+/* status badges */
+.stb {{ display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.66rem; font-weight: 700; }}
+.st-ong {{ background: #DBEAFE; color: #1D4ED8; }}
+.st-unr {{ background: #FEF3C7; color: #B45309; }}
+.st-cmp {{ background: #D1FAE5; color: #047857; }}
+.st-cnc {{ background: #E2E8F0; color: #475569; }}
+.st-def {{ background: {BD_BG}; color: {BD_C}; }}
+
+.pc {{ background: #FEE2E2; color: #DC2626; padding: 3px 9px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -263,6 +268,15 @@ def mk_badge(text):
     elif "pengajaran" in t: cls = "bp"
     else: cls = "bd"
     return f'<span class="bdg {cls}">{text}</span>'
+
+
+def mk_status(text):
+    s = str(text).strip().lower()
+    if s == "ongoing":       return '<span class="stb st-ong">Ongoing</span>'
+    if s == "unresponsive":  return '<span class="stb st-unr">Unresponsive</span>'
+    if s == "completed":     return '<span class="stb st-cmp">Completed</span>'
+    if s == "canceled":      return '<span class="stb st-cnc">Canceled</span>'
+    return f'<span class="stb st-def">{text or "-"}</span>'
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -293,7 +307,6 @@ def check_password():
                 Authentication Required</p>
         </div>
         """, unsafe_allow_html=True)
-        # Pull the form up to overlap the bottom of the card
         st.markdown('<div style="margin-top:-52px;padding:0 40px;">', unsafe_allow_html=True)
         with st.form("login_form"):
             st.text_input("pw", type="password", key="_pw",
@@ -339,13 +352,14 @@ def load_data():
 
     df2 = df2.iloc[24:].reset_index(drop=True).copy()
 
-    col_id    = _find_col(df2, "ID Klien (26.XXX)\nisi 3 angka belakang saja", "ID Klien")
-    col_nom   = _find_col(df2, "Nominal yang diberikan", "Nominal")
-    col_layan = _find_col(df1, "Layanan yang diinginkan", "Layanan")
-    col_nama  = _find_col(df1, "Nama Klien", "Nama")
-    col_kon   = _find_col(df1, "Konsultan", "Konsultan")
-    col_topik = _find_col(df2, "Materi Analisis", "Materi")
-    col_kon2  = _find_col(df2, "Nama Konsultan", "Konsultan")
+    col_id     = _find_col(df2, "ID Klien (26.XXX)\nisi 3 angka belakang saja", "ID Klien")
+    col_nom    = _find_col(df2, "Nominal yang diberikan", "Nominal")
+    col_layan  = _find_col(df1, "Layanan yang diinginkan", "Layanan")
+    col_nama   = _find_col(df1, "Nama Klien", "Nama")
+    col_kon    = _find_col(df1, "Konsultan", "Konsultan")
+    col_topik  = _find_col(df2, "Materi Analisis", "Materi")
+    col_kon2   = _find_col(df2, "Nama Konsultan", "Konsultan")
+    col_status = _find_col(df1, "Status", "status")
 
     if not col_id or not col_nom:
         raise ValueError("Critical columns missing in SPS 2.")
@@ -360,25 +374,45 @@ def load_data():
     df1['Generated_ID'] = (df1[col_id1].astype(str).str.strip()
                            .str.replace(r"\.0$", "", regex=True).str.zfill(3))
 
-    return df1, df2, col_id, col_nom, col_layan, col_nama, col_kon, col_topik, col_kon2
+    return (df1, df2, col_id, col_nom, col_layan, col_nama,
+            col_kon, col_topik, col_kon2, col_status)
 
 
 try:
-    df_in, df_done, C_ID, C_NOM, C_LAYAN, C_NAMA, C_KON, C_TOPIK, C_KON2 = load_data()
+    (df_in, df_done, C_ID, C_NOM, C_LAYAN, C_NAMA,
+     C_KON, C_TOPIK, C_KON2, C_STATUS) = load_data()
 except Exception as e:
     st.error(f"Failed to fetch data: {e}")
     st.stop()
 
 
-# ── Metrics ───────────────────────────────────────────────────────────────────
-FEE = 50_000
+# ── Client status (from SPS 1) ────────────────────────────────────────────────
+status_ok = bool(C_STATUS and C_STATUS in df_in.columns)
+if status_ok:
+    status_series  = df_in[C_STATUS].astype(str).str.strip().str.lower()
+    n_completed    = int((status_series == "completed").sum())
+    n_ongoing      = int((status_series == "ongoing").sum())
+    n_unresponsive = int((status_series == "unresponsive").sum())
+    n_canceled     = int((status_series == "canceled").sum())
+    active_mask    = status_series.isin(["ongoing", "unresponsive"])
+else:
+    # Fallback (kalau kolom status tidak ketemu): pakai banding SPS 2 seperti dulu
+    done_ids       = df_done[C_ID].tolist()
+    active_mask    = ~df_in['Generated_ID'].isin(done_ids)
+    status_series  = pd.Series("ongoing", index=df_in.index)
+    n_completed    = int((~active_mask).sum())
+    n_ongoing      = int(active_mask.sum())
+    n_unresponsive = 0
+    n_canceled     = 0
 
-done_ids  = df_done[C_ID].tolist()
-pend_mask = ~df_in['Generated_ID'].isin(done_ids)
-n_in      = len(df_in)
-n_pend    = int(pend_mask.sum())
-n_done    = n_in - n_pend
-pct_done  = round(n_done / n_in * 100) if n_in else 0
+n_in     = len(df_in)
+n_done   = n_completed
+n_pend   = n_ongoing + n_unresponsive
+pct_done = round(n_done / n_in * 100) if n_in else 0
+
+
+# ── Revenue / tax (dari SPS 2) ────────────────────────────────────────────────
+FEE = 50_000
 valuation = df_done[C_NOM].sum() + n_in * FEE
 
 
@@ -400,39 +434,39 @@ net_t   = tax_df["Net"].sum()
 # ── Header ────────────────────────────────────────────────────────────────────
 logo_b64  = get_b64("logo gsb.png")
 logo_html = (f'<img src="data:image/png;base64,{logo_b64}" '
-             f'style="height:50px;border-radius:50%;margin-right:14px;">'
+             f'style="height:44px;border-radius:50%;margin-right:12px;">'
              if logo_b64 else '')
 
-hdr_col, btn_col = st.columns([6, 1])
+hdr_col, btn_col = st.columns([13, 1])
 
 with hdr_col:
     st.markdown(f"""
     <div style="background:linear-gradient(135deg,#F97316 0%,#EA580C 50%,#C2410C 100%);
-         border-radius:12px; padding:18px 28px;
+         border-radius:12px; padding:12px 24px;
          display:flex; justify-content:space-between; align-items:center;
          box-shadow:0 8px 24px rgba(234,88,12,0.22);">
         <div style="display:flex; align-items:center;">
             {logo_html}
             <div>
-                <div style="color:#fff; font-size:1.55rem; font-weight:800;
+                <div style="color:#fff; font-size:1.35rem; font-weight:800;
                      line-height:1.2; letter-spacing:-0.02em;">
                     GSB Data Consulting Services</div>
-                <div style="color:rgba(255,255,255,0.88); font-size:0.78rem;
+                <div style="color:rgba(255,255,255,0.88); font-size:0.72rem;
                      font-weight:700; text-transform:uppercase; letter-spacing:0.09em;
-                     margin-top:4px;">
+                     margin-top:3px;">
                     Department of Data Analytics</div>
             </div>
         </div>
         <div style="border-left:2px solid rgba(255,255,255,0.25);
-             padding-left:24px; margin-left:8px;">
-            <div style="color:rgba(255,255,255,0.85); font-size:0.68rem; font-weight:700;
-                 text-transform:uppercase; letter-spacing:0.09em; margin-bottom:4px;">
+             padding-left:22px; margin-left:8px;">
+            <div style="color:rgba(255,255,255,0.85); font-size:0.66rem; font-weight:700;
+                 text-transform:uppercase; letter-spacing:0.09em; margin-bottom:3px;">
                 Total Estimated Value</div>
-            <div style="display:flex; align-items:baseline; gap:10px;">
-                <div style="color:#fff; font-size:2rem; font-weight:800;
+            <div style="display:flex; align-items:baseline; gap:9px;">
+                <div style="color:#fff; font-size:1.7rem; font-weight:800;
                      line-height:1; letter-spacing:-0.02em;">
                     Rp {valuation:,.0f}</div>
-                <div style="color:rgba(255,255,255,0.55); font-size:0.72rem;
+                <div style="color:rgba(255,255,255,0.55); font-size:0.7rem;
                      font-weight:300; letter-spacing:0.02em;">
                     after adm</div>
             </div>
@@ -441,21 +475,28 @@ with hdr_col:
     """, unsafe_allow_html=True)
 
 with btn_col:
-    # Align button vertically with the header box
-    st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
-    label = "☀️ Light Mode" if is_dark else "🌙 Dark Mode"
-    wrap  = "lm-btn" if is_dark else "dm-btn"
-    st.markdown(f'<div class="{wrap}">', unsafe_allow_html=True)
-    if st.button(label, key="dm", use_container_width=True):
-        st.session_state.dark_mode = not st.session_state.dark_mode
+    # ☀️ Light + 🌙 Dark, disusun atas-bawah; yang aktif ter-highlight
+    st.markdown(f'<div class="{"mbtn-on" if not is_dark else "mbtn-off"}">',
+                unsafe_allow_html=True)
+    if st.button("☀️", key="light_btn", use_container_width=True,
+                 help="Light mode"):
+        st.session_state.dark_mode = False
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("<div style='margin-top:16px;'></div>", unsafe_allow_html=True)
+    st.markdown(f'<div class="{"mbtn-on" if is_dark else "mbtn-off"}">',
+                unsafe_allow_html=True)
+    if st.button("🌙", key="dark_btn", use_container_width=True,
+                 help="Dark mode"):
+        st.session_state.dark_mode = True
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
 
 
-# ── Metric Cards ──────────────────────────────────────────────────────────────
-c1, c2, c3, c4, c5 = st.columns(5)
+# ── Metric Cards (6) ──────────────────────────────────────────────────────────
+c1, c2, c3, c4, c5, c6 = st.columns(6)
 
 with c1:
     st.markdown(f"""
@@ -484,26 +525,33 @@ with c4:
         <div class="ml" style="color:#10B981;">Completed Clients</div>
         <div class="mv-center" style="color:#10B981;">
             {n_done}
-            <span style="font-size:1.1rem;color:{T2};font-weight:600;">/ {n_in}</span>
+            <span style="font-size:0.95rem;color:{T2};font-weight:600;">/ {n_in}</span>
         </div>
         <div class="pb"><div class="pf" style="width:{pct_done}%;"></div></div>
         <div class="pl">{pct_done}% completion rate</div>
     </div>""", unsafe_allow_html=True)
 
 with c5:
-    ac = "#DC2626" if n_pend > 0 else "#10B981"
-    cc = "r"       if n_pend > 0 else "g"
     st.markdown(f"""
-    <div class="mc {cc}">
-        <div class="ml" style="color:{ac};">Pending Clients</div>
-        <div class="mv-center" style="color:{ac};margin-top:10px;">{n_pend}</div>
+    <div class="mc a">
+        <div class="ml" style="color:#D97706;">Pending Clients</div>
+        <div class="mv-center" style="color:#D97706;margin-top:6px;">{n_pend}</div>
+        <div class="pl">ongoing + unresponsive</div>
     </div>""", unsafe_allow_html=True)
 
-st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+with c6:
+    st.markdown(f"""
+    <div class="mc k">
+        <div class="ml" style="color:#64748B;">Canceled Clients</div>
+        <div class="mv-center" style="color:#64748B;margin-top:6px;">{n_canceled}</div>
+        <div class="pl">dibatalkan</div>
+    </div>""", unsafe_allow_html=True)
+
+st.markdown("<div style='margin-top:14px;'></div>", unsafe_allow_html=True)
 
 
 # ── Bottom Section ────────────────────────────────────────────────────────────
-MH = 390
+MH = 330
 
 CONS_LIST = [
     "Helmi Falah", "Nyayu Azzahra Nabila", "Cut Ashifa Sawallida", "Retno Sari",
@@ -516,18 +564,16 @@ CONS_LIST = [
 col_a, col_b, col_c, col_d = st.columns([1.1, 1.1, 1.1, 1.5], gap="medium")
 
 
-# ── Consultant Workload ───────────────────────────────────────────────────────
+# ── Consultant Workload (dari SPS 1) ──────────────────────────────────────────
 with col_a:
     cdf = pd.DataFrame({"Consultant": CONS_LIST, "N": 0})
-    if C_KON2 and C_KON2 in df_done.columns:
-        counts = (df_done[C_KON2].astype(str).str.split(r'[,;\n]+')
+    if C_KON and C_KON in df_in.columns:
+        counts = (df_in[C_KON].astype(str).str.split(r'[,;\n]+')
                   .explode().str.strip().value_counts().reset_index())
         counts.columns = ["Consultant", "Count"]
         for i, row in cdf.iterrows():
-            # Exact match first
             m = counts[counts['Consultant'].str.lower() == row['Consultant'].lower()]
             if m.empty:
-                # Fallback: match by last name
                 last = row['Consultant'].split()[-1].lower()
                 m = counts[counts['Consultant'].str.lower().str.endswith(last)]
             if not m.empty:
@@ -560,65 +606,67 @@ with col_a:
     </div>""", unsafe_allow_html=True)
 
 
-# ── Service Distribution ──────────────────────────────────────────────────────
+# ── Service Distribution (dibungkus kartu .sc putih) ──────────────────────────
 with col_b:
-    # Use st.container(border=True) — CSS above overrides its styling to match our cards
-    with st.container(border=True):
-        st.markdown('<div class="sh">Service Distribution</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="sc" style="max-height:{MH}px;overflow-y:auto;">',
+                unsafe_allow_html=True)
+    st.markdown('<div class="sh">Service Distribution</div>', unsafe_allow_html=True)
 
-        if C_LAYAN and C_LAYAN in df_in.columns:
-            svc = df_in[C_LAYAN].value_counts().reset_index()
-            svc.columns = ["Service", "Qty"]
-            colors = ["#7C3AED", "#059669", "#F59E0B", "#3B82F6", "#EF4444"]
+    if C_LAYAN and C_LAYAN in df_in.columns:
+        svc = df_in[C_LAYAN].value_counts().reset_index()
+        svc.columns = ["Service", "Qty"]
+        colors = ["#7C3AED", "#059669", "#F59E0B", "#3B82F6", "#EF4444"]
 
-            fig = go.Figure(go.Pie(
-                labels=svc["Service"],
-                values=svc["Qty"],
-                hole=0.62,
-                marker=dict(
-                    colors=colors[:len(svc)],
-                    line=dict(color='rgba(0,0,0,0)', width=0)
-                ),
-                textinfo='none',
-                hovertemplate='<b>%{label}</b><br>%{value} klien (%{percent})<extra></extra>'
-            ))
-            fig.update_layout(
-                showlegend=False,
-                margin=dict(t=0, b=0, l=0, r=0),
-                height=155,
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                annotations=[dict(
-                    text=f"<b>{n_in}</b><br>total",
-                    x=0.5, y=0.5,
-                    font_size=16, font_color=T1,
-                    showarrow=False
-                )]
-            )
-            st.plotly_chart(fig, use_container_width=True,
-                            config={'displayModeBar': False})
+        fig = go.Figure(go.Pie(
+            labels=svc["Service"],
+            values=svc["Qty"],
+            hole=0.62,
+            marker=dict(
+                colors=colors[:len(svc)],
+                line=dict(color='rgba(0,0,0,0)', width=0)
+            ),
+            textinfo='none',
+            hovertemplate='<b>%{label}</b><br>%{value} klien (%{percent})<extra></extra>'
+        ))
+        fig.update_layout(
+            showlegend=False,
+            margin=dict(t=0, b=0, l=0, r=0),
+            height=150,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            annotations=[dict(
+                text=f"<b>{n_in}</b><br>total",
+                x=0.5, y=0.5,
+                font_size=16, font_color=T1,
+                showarrow=False
+            )]
+        )
+        st.plotly_chart(fig, use_container_width=True,
+                        config={'displayModeBar': False})
 
-            for i, (_, r) in enumerate(svc.iterrows()):
-                col = colors[i % len(colors)]
-                p   = round(r['Qty'] / n_in * 100) if n_in else 0
-                st.markdown(f"""
-                <div style="display:flex;align-items:center;justify-content:space-between;
-                     padding:6px 0;border-bottom:1px solid {TB};">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <div style="width:9px;height:9px;border-radius:50%;
-                             background:{col};flex-shrink:0;"></div>
-                        <span style="color:{T1};font-size:0.82rem;font-weight:500;">
-                            {r['Service']}</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <span style="color:{T1};font-weight:700;font-size:0.82rem;">
-                            {int(r['Qty'])}</span>
-                        <span style="color:{T2};font-size:0.75rem;min-width:32px;text-align:right;">
-                            {p}%</span>
-                    </div>
-                </div>""", unsafe_allow_html=True)
-        else:
-            st.warning("Data layanan tidak ditemukan.")
+        for i, (_, r) in enumerate(svc.iterrows()):
+            col = colors[i % len(colors)]
+            p   = round(r['Qty'] / n_in * 100) if n_in else 0
+            st.markdown(f"""
+            <div style="display:flex;align-items:center;justify-content:space-between;
+                 padding:5px 0;border-bottom:1px solid {TB};">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:9px;height:9px;border-radius:50%;
+                         background:{col};flex-shrink:0;"></div>
+                    <span style="color:{T1};font-size:0.8rem;font-weight:500;">
+                        {r['Service']}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="color:{T1};font-weight:700;font-size:0.8rem;">
+                        {int(r['Qty'])}</span>
+                    <span style="color:{T2};font-size:0.74rem;min-width:32px;text-align:right;">
+                        {p}%</span>
+                </div>
+            </div>""", unsafe_allow_html=True)
+    else:
+        st.warning("Data layanan tidak ditemukan.")
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ── Topic Distribution ────────────────────────────────────────────────────────
@@ -654,40 +702,52 @@ with col_c:
     </div>""", unsafe_allow_html=True)
 
 
-# ── Pending Clients Roster ────────────────────────────────────────────────────
+# ── Active Clients (ongoing + unresponsive, dari SPS 1) ───────────────────────
 with col_d:
-    pend_df = df_in[pend_mask].copy()
-    p_rows  = ""
-    for _, row in pend_df.iterrows():
+    active_df = df_in[active_mask].copy()
+    active_df["_status"] = status_series[active_mask].values
+
+    p_rows = ""
+    for _, row in active_df.iterrows():
         id_v = row['Generated_ID']
-        nm_v = row[C_NAMA]  if (C_NAMA  and C_NAMA  in pend_df.columns) else '-'
-        sv_v = row[C_LAYAN] if (C_LAYAN and C_LAYAN in pend_df.columns) else '-'
-        kn_v = row[C_KON]   if (C_KON   and C_KON   in pend_df.columns) else '-'
+        nm_v = row[C_NAMA]  if (C_NAMA  and C_NAMA  in active_df.columns) else '-'
+        sv_v = row[C_LAYAN] if (C_LAYAN and C_LAYAN in active_df.columns) else '-'
+        kn_v = row[C_KON]   if (C_KON   and C_KON   in active_df.columns) else '-'
+        stt  = row['_status']
         p_rows += f"""<tr>
             <td style="font-weight:700;color:#EA580C;">{id_v}</td>
             <td style="font-weight:600;">{nm_v}</td>
             <td>{mk_badge(sv_v)}</td>
-            <td style="color:{T2};font-size:0.79rem;">{kn_v}</td>
+            <td style="color:{T2};font-size:0.77rem;">{kn_v}</td>
+            <td>{mk_status(stt)}</td>
         </tr>"""
 
-    chip = (f'<span class="pc">{n_pend} pending</span>' if n_pend > 0
-            else f'<span style="color:#10B981;font-size:0.75rem;font-weight:700;">✓ All clear</span>')
+    n_active = len(active_df)
+    chip = (f'<span class="pc">{n_active} active</span>' if n_active > 0
+            else f'<span style="color:#10B981;font-size:0.72rem;font-weight:700;">✓ All clear</span>')
 
-    body = (f"""<table class="ct">
+    body = (f"""<table class="ct rt">
+                <colgroup>
+                    <col style="width:11%">
+                    <col style="width:23%">
+                    <col style="width:22%">
+                    <col style="width:24%">
+                    <col style="width:20%">
+                </colgroup>
                 <thead>
                     <tr>
                         <th>ID</th><th>Client</th>
-                        <th>Service</th><th>Consultant</th>
+                        <th>Service</th><th>Consultant</th><th>Status</th>
                     </tr>
                 </thead>
                 <tbody>{p_rows}</tbody>
             </table>"""
-            if not pend_df.empty
+            if not active_df.empty
             else f"<p style='text-align:center;color:#10B981;font-weight:600;"
-                 f"padding:20px 0;'>✓ All clients processed.</p>")
+                 f"padding:20px 0;'>✓ Semua klien sudah tertangani.</p>")
 
     st.markdown(f"""
-    <div class="sc" style="max-height:{MH}px;overflow-y:auto;">
-        <div class="sh">Pending Clients Roster {chip}</div>
+    <div class="sc" style="max-height:{MH}px;overflow-y:auto;overflow-x:hidden;">
+        <div class="sh">Active Clients {chip}</div>
         {body}
     </div>""", unsafe_allow_html=True)
