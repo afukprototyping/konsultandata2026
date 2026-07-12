@@ -118,17 +118,16 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     letter-spacing: 0.02em !important;
 }}
 
-/* ── MODE ICON BUTTONS (☀️/🌙 stacked) ────────────────────────── */
+/* ── MODE ICON BUTTONS (☀️/🌙 stacked, se-tinggi bar oranye) ───── */
 .st-key-mode_light button, .st-key-mode_dark button {{
     padding: 4px 0 !important;
     min-height: 0 !important;
-    height: 34px !important;
-    border-radius: 10px !important;
-    font-size: 1.05rem !important;
+    height: 42px !important;
+    border-radius: 12px !important;
+    font-size: 1.3rem !important;
     line-height: 1 !important;
-    margin-bottom: 4px !important;
+    margin-bottom: 5px !important;
 }}
-/* active = primary → orange */
 .st-key-mode_light button[kind="primary"], .st-key-mode_dark button[kind="primary"],
 .st-key-mode_light [data-testid="stBaseButton-primary"],
 .st-key-mode_dark [data-testid="stBaseButton-primary"] {{
@@ -137,7 +136,6 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     color: #fff !important;
     box-shadow: 0 2px 8px rgba(234,88,12,0.30) !important;
 }}
-/* inactive = secondary → muted */
 .st-key-mode_light button[kind="secondary"], .st-key-mode_dark button[kind="secondary"],
 .st-key-mode_light [data-testid="stBaseButton-secondary"],
 .st-key-mode_dark [data-testid="stBaseButton-secondary"] {{
@@ -146,15 +144,15 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     opacity: 0.6 !important;
 }}
 
-/* ── METRIC CARDS (compact) ────────────────────────────────────── */
+/* ── METRIC CARDS (compact, tinggi seragam) ────────────────────── */
 .mc {{
     background: {CARD_BG};
     backdrop-filter: blur(12px);
     border: 1px solid {CARD_BD};
     border-top: 4px solid #1E3A8A;
     border-radius: 10px;
-    padding: 14px 14px;
-    min-height: 118px;
+    padding: 16px 16px;
+    min-height: 148px;
     height: 100%;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     display: flex;
@@ -229,7 +227,6 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
 .ct tbody tr {{ border-bottom: 1px solid {TB}; }}
 .ct tbody td {{ padding: 8px 10px; color: {T1}; vertical-align: middle; }}
 
-/* roster table — fixed layout, no horizontal scroll, no ugly char-break */
 .rt {{ table-layout: fixed; }}
 .rt th, .rt td {{ overflow-wrap: break-word; word-break: normal; padding: 7px 7px !important; }}
 .rt td.idc {{ white-space: nowrap; }}
@@ -437,7 +434,7 @@ net_t   = tax_df["Net"].sum()
 # ── Header ────────────────────────────────────────────────────────────────────
 logo_b64  = get_b64("logo gsb.png")
 logo_html = (f'<img src="data:image/png;base64,{logo_b64}" '
-             f'style="height:44px;border-radius:50%;margin-right:12px;">'
+             f'style="height:46px;border-radius:50%;margin-right:12px;">'
              if logo_b64 else '')
 
 hdr_col, btn_col = st.columns([13, 1])
@@ -445,13 +442,13 @@ hdr_col, btn_col = st.columns([13, 1])
 with hdr_col:
     st.markdown(f"""
     <div style="background:linear-gradient(135deg,#F97316 0%,#EA580C 50%,#C2410C 100%);
-         border-radius:12px; padding:12px 24px;
+         border-radius:12px; padding:20px 26px;
          display:flex; justify-content:space-between; align-items:center;
          box-shadow:0 8px 24px rgba(234,88,12,0.22);">
         <div style="display:flex; align-items:center;">
             {logo_html}
             <div>
-                <div style="color:#fff; font-size:1.35rem; font-weight:800;
+                <div style="color:#fff; font-size:1.4rem; font-weight:800;
                      line-height:1.2; letter-spacing:-0.02em;">
                     GSB Data Consulting Services</div>
                 <div style="color:rgba(255,255,255,0.88); font-size:0.72rem;
@@ -466,7 +463,7 @@ with hdr_col:
                  text-transform:uppercase; letter-spacing:0.09em; margin-bottom:3px;">
                 Total Estimated Value</div>
             <div style="display:flex; align-items:baseline; gap:9px;">
-                <div style="color:#fff; font-size:1.7rem; font-weight:800;
+                <div style="color:#fff; font-size:1.8rem; font-weight:800;
                      line-height:1; letter-spacing:-0.02em;">
                     Rp {valuation:,.0f}</div>
                 <div style="color:rgba(255,255,255,0.55); font-size:0.7rem;
@@ -490,7 +487,7 @@ with btn_col:
 st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
 
 
-# ── Metric Cards (6) ──────────────────────────────────────────────────────────
+# ── Metric Cards (6, tinggi seragam) ──────────────────────────────────────────
 c1, c2, c3, c4, c5, c6 = st.columns(6)
 
 with c1:
@@ -545,7 +542,7 @@ with c6:
 st.markdown("<div style='margin-top:14px;'></div>", unsafe_allow_html=True)
 
 
-# ── Bottom Section ────────────────────────────────────────────────────────────
+# ── Bottom Section (tinggi seragam) ───────────────────────────────────────────
 MH = 330
 
 CONS_LIST = [
@@ -592,7 +589,7 @@ with col_a:
             </div></td></tr>"""
 
     st.markdown(f"""
-    <div class="sc" style="max-height:{MH}px;overflow-y:auto;">
+    <div class="sc" style="height:{MH}px;overflow-y:auto;">
         <div class="sh">Consultant Workload</div>
         <table class="ct">
             <thead><tr><th>Consultant</th></tr></thead>
@@ -601,7 +598,7 @@ with col_a:
     </div>""", unsafe_allow_html=True)
 
 
-# ── Service Distribution (SVG donut murni, dalam kartu .sc) ───────────────────
+# ── Service Distribution (SVG donut, kartu .sc, tinggi sama) ───────────────────
 with col_b:
     if C_LAYAN and C_LAYAN in df_in.columns and n_in > 0:
         svc = df_in[C_LAYAN].value_counts().reset_index()
@@ -646,14 +643,14 @@ with col_b:
             )
 
         st.markdown(f"""
-        <div class="sc" style="max-height:{MH}px;overflow-y:auto;">
+        <div class="sc" style="height:{MH}px;overflow-y:auto;">
             <div class="sh">Service Distribution</div>
             <div style="display:flex;justify-content:center;margin:2px 0 10px;">{donut}</div>
             {legend}
         </div>""", unsafe_allow_html=True)
     else:
         st.markdown(f"""
-        <div class="sc"><div class="sh">Service Distribution</div>
+        <div class="sc" style="height:{MH}px;"><div class="sh">Service Distribution</div>
         <p style="color:{T2};font-size:0.82rem;">Data layanan tidak ditemukan.</p></div>""",
                     unsafe_allow_html=True)
 
@@ -677,7 +674,7 @@ with col_c:
                  f'padding:20px;">No data</td></tr>')
 
     st.markdown(f"""
-    <div class="sc" style="max-height:{MH}px;overflow-y:auto;">
+    <div class="sc" style="height:{MH}px;overflow-y:auto;">
         <div class="sh">Topic Distribution</div>
         <table class="ct">
             <thead>
@@ -736,7 +733,7 @@ with col_d:
                  f"padding:20px 0;'>✓ Semua klien sudah tertangani.</p>")
 
     st.markdown(f"""
-    <div class="sc" style="max-height:{MH}px;overflow-y:auto;overflow-x:hidden;">
+    <div class="sc" style="height:{MH}px;overflow-y:auto;overflow-x:hidden;">
         <div class="sh">Active Clients {chip}</div>
         {body}
     </div>""", unsafe_allow_html=True)
