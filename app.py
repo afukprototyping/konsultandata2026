@@ -123,7 +123,13 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     border-radius: 12px !important;
     font-size: 1.3rem !important;
     line-height: 1 !important;
-    margin-bottom: 5px !important;
+    margin-bottom: 0 !important;
+}}
+/* rapetin 2 tombol mode biar sejajar & center sama bar oranye */
+div[data-testid="stVerticalBlock"]:has(> .st-key-mode_light) {{
+    gap: 0.4rem !important;
+    height: 100% !important;
+    justify-content: center !important;
 }}
 .st-key-mode_light button[kind="primary"], .st-key-mode_dark button[kind="primary"],
 .st-key-mode_light [data-testid="stBaseButton-primary"],
