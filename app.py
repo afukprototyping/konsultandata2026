@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
 import gspread
 from google.oauth2.service_account import Credentials
 import base64
@@ -119,26 +118,32 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     letter-spacing: 0.02em !important;
 }}
 
-/* ── DARK / LIGHT MODE ICON BUTTONS (2 tombol vertikal) ────────── */
-.mbtn-on button, .mbtn-off button,
-.st-key-light_btn button, .st-key-dark_btn button {{
+/* ── MODE ICON BUTTONS (☀️/🌙 stacked) ────────────────────────── */
+.st-key-mode_light button, .st-key-mode_dark button {{
     padding: 4px 0 !important;
     min-height: 0 !important;
     height: 34px !important;
     border-radius: 10px !important;
     font-size: 1.05rem !important;
     line-height: 1 !important;
-    margin-bottom: 3px !important;
+    margin-bottom: 4px !important;
 }}
-.mbtn-on button {{
+/* active = primary → orange */
+.st-key-mode_light button[kind="primary"], .st-key-mode_dark button[kind="primary"],
+.st-key-mode_light [data-testid="stBaseButton-primary"],
+.st-key-mode_dark [data-testid="stBaseButton-primary"] {{
     background: linear-gradient(135deg,#F97316,#EA580C) !important;
     border: 1px solid #EA580C !important;
+    color: #fff !important;
     box-shadow: 0 2px 8px rgba(234,88,12,0.30) !important;
 }}
-.mbtn-off button {{
+/* inactive = secondary → muted */
+.st-key-mode_light button[kind="secondary"], .st-key-mode_dark button[kind="secondary"],
+.st-key-mode_light [data-testid="stBaseButton-secondary"],
+.st-key-mode_dark [data-testid="stBaseButton-secondary"] {{
     background: rgba(148,163,184,0.18) !important;
     border: 1px solid rgba(148,163,184,0.35) !important;
-    opacity: 0.55 !important;
+    opacity: 0.6 !important;
 }}
 
 /* ── METRIC CARDS (compact) ────────────────────────────────────── */
@@ -216,7 +221,7 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     font-size: 0.64rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     padding: 8px 10px;
     text-align: left;
     border-bottom: 1px solid {TB};
@@ -224,25 +229,24 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
 .ct tbody tr {{ border-bottom: 1px solid {TB}; }}
 .ct tbody td {{ padding: 8px 10px; color: {T1}; vertical-align: middle; }}
 
-/* roster table — fixed layout so it fits WITHOUT horizontal scroll */
+/* roster table — fixed layout, no horizontal scroll, no ugly char-break */
 .rt {{ table-layout: fixed; }}
-.rt th, .rt td {{ word-break: break-word; white-space: normal; }}
+.rt th, .rt td {{ overflow-wrap: break-word; word-break: normal; padding: 7px 7px !important; }}
+.rt td.idc {{ white-space: nowrap; }}
 
 .cr {{ display: flex; align-items: center; gap: 8px; }}
 .cn {{ flex: 1; color: {T1}; font-weight: 600; font-size: 0.82rem; }}
-.cb {{ width: 70px; height: 4px; background: {PB}; border-radius: 999px; overflow: hidden; flex-shrink: 0; }}
+.cb {{ width: 60px; height: 4px; background: {PB}; border-radius: 999px; overflow: hidden; flex-shrink: 0; }}
 .cf {{ height: 100%; background: linear-gradient(90deg,#F97316,#C2410C); border-radius: 999px; }}
 .cnum {{ font-weight: 800; color: {T1}; font-size: 0.86rem; min-width: 18px; text-align: right; }}
 .czero {{ color: {T2}; font-weight: 400; font-style: italic; font-size: 0.78rem; }}
 
-.bdg {{ display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; }}
+.bdg, .stb {{ display: inline-block; padding: 3px 9px; border-radius: 999px;
+              font-size: 0.66rem; font-weight: 700; white-space: nowrap; }}
 .ba {{ background: #CCFBF1; color: #0F766E; }}
 .bk {{ background: #EDE9FE; color: #6D28D9; }}
 .bp {{ background: #FEF9C3; color: #92400E; }}
 .bd {{ background: {BD_BG}; color: {BD_C}; }}
-
-/* status badges */
-.stb {{ display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.66rem; font-weight: 700; }}
 .st-ong {{ background: #DBEAFE; color: #1D4ED8; }}
 .st-unr {{ background: #FEF3C7; color: #B45309; }}
 .st-cmp {{ background: #D1FAE5; color: #047857; }}
@@ -396,7 +400,6 @@ if status_ok:
     n_canceled     = int((status_series == "canceled").sum())
     active_mask    = status_series.isin(["ongoing", "unresponsive"])
 else:
-    # Fallback (kalau kolom status tidak ketemu): pakai banding SPS 2 seperti dulu
     done_ids       = df_done[C_ID].tolist()
     active_mask    = ~df_in['Generated_ID'].isin(done_ids)
     status_series  = pd.Series("ongoing", index=df_in.index)
@@ -475,22 +478,14 @@ with hdr_col:
     """, unsafe_allow_html=True)
 
 with btn_col:
-    # ☀️ Light + 🌙 Dark, disusun atas-bawah; yang aktif ter-highlight
-    st.markdown(f'<div class="{"mbtn-on" if not is_dark else "mbtn-off"}">',
-                unsafe_allow_html=True)
-    if st.button("☀️", key="light_btn", use_container_width=True,
-                 help="Light mode"):
+    if st.button("☀️", key="mode_light", use_container_width=True, help="Light mode",
+                 type=("primary" if not is_dark else "secondary")):
         st.session_state.dark_mode = False
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown(f'<div class="{"mbtn-on" if is_dark else "mbtn-off"}">',
-                unsafe_allow_html=True)
-    if st.button("🌙", key="dark_btn", use_container_width=True,
-                 help="Dark mode"):
+    if st.button("🌙", key="mode_dark", use_container_width=True, help="Dark mode",
+                 type=("primary" if is_dark else "secondary")):
         st.session_state.dark_mode = True
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
 
@@ -561,7 +556,7 @@ CONS_LIST = [
     "Muhammad Shira Pramudita", "Nabeel Muhammad Diaz",
 ]
 
-col_a, col_b, col_c, col_d = st.columns([1.1, 1.1, 1.1, 1.5], gap="medium")
+col_a, col_b, col_c, col_d = st.columns([1.1, 1.1, 1.1, 2.2], gap="medium")
 
 
 # ── Consultant Workload (dari SPS 1) ──────────────────────────────────────────
@@ -606,67 +601,61 @@ with col_a:
     </div>""", unsafe_allow_html=True)
 
 
-# ── Service Distribution (dibungkus kartu .sc putih) ──────────────────────────
+# ── Service Distribution (SVG donut murni, dalam kartu .sc) ───────────────────
 with col_b:
-    st.markdown(f'<div class="sc" style="max-height:{MH}px;overflow-y:auto;">',
-                unsafe_allow_html=True)
-    st.markdown('<div class="sh">Service Distribution</div>', unsafe_allow_html=True)
-
-    if C_LAYAN and C_LAYAN in df_in.columns:
+    if C_LAYAN and C_LAYAN in df_in.columns and n_in > 0:
         svc = df_in[C_LAYAN].value_counts().reset_index()
         svc.columns = ["Service", "Qty"]
         colors = ["#7C3AED", "#059669", "#F59E0B", "#3B82F6", "#EF4444"]
+        total_svc = int(svc["Qty"].sum())
 
-        fig = go.Figure(go.Pie(
-            labels=svc["Service"],
-            values=svc["Qty"],
-            hole=0.62,
-            marker=dict(
-                colors=colors[:len(svc)],
-                line=dict(color='rgba(0,0,0,0)', width=0)
-            ),
-            textinfo='none',
-            hovertemplate='<b>%{label}</b><br>%{value} klien (%{percent})<extra></extra>'
-        ))
-        fig.update_layout(
-            showlegend=False,
-            margin=dict(t=0, b=0, l=0, r=0),
-            height=150,
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            annotations=[dict(
-                text=f"<b>{n_in}</b><br>total",
-                x=0.5, y=0.5,
-                font_size=16, font_color=T1,
-                showarrow=False
-            )]
-        )
-        st.plotly_chart(fig, use_container_width=True,
-                        config={'displayModeBar': False})
-
+        segs = ""
+        offset = 25.0
         for i, (_, r) in enumerate(svc.iterrows()):
-            col = colors[i % len(colors)]
-            p   = round(r['Qty'] / n_in * 100) if n_in else 0
-            st.markdown(f"""
-            <div style="display:flex;align-items:center;justify-content:space-between;
-                 padding:5px 0;border-bottom:1px solid {TB};">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <div style="width:9px;height:9px;border-radius:50%;
-                         background:{col};flex-shrink:0;"></div>
-                    <span style="color:{T1};font-size:0.8rem;font-weight:500;">
-                        {r['Service']}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="color:{T1};font-weight:700;font-size:0.8rem;">
-                        {int(r['Qty'])}</span>
-                    <span style="color:{T2};font-size:0.74rem;min-width:32px;text-align:right;">
-                        {p}%</span>
-                </div>
-            </div>""", unsafe_allow_html=True)
-    else:
-        st.warning("Data layanan tidak ditemukan.")
+            p = (r["Qty"] / total_svc * 100) if total_svc else 0
+            color = colors[i % len(colors)]
+            segs += (f'<circle cx="21" cy="21" r="15.9155" fill="transparent" '
+                     f'stroke="{color}" stroke-width="5" '
+                     f'stroke-dasharray="{p:.2f} {100 - p:.2f}" '
+                     f'stroke-dashoffset="{offset:.2f}"></circle>')
+            offset -= p
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        donut = (
+            f'<svg viewBox="0 0 42 42" style="width:148px;height:148px;">'
+            f'<circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="{TB}" stroke-width="5"></circle>'
+            f'{segs}'
+            f'<text x="21" y="20.5" text-anchor="middle" font-size="7" font-weight="800" fill="{T1}">{n_in}</text>'
+            f'<text x="21" y="26" text-anchor="middle" font-size="3.2" fill="{T2}">total</text>'
+            f'</svg>'
+        )
+
+        legend = ""
+        for i, (_, r) in enumerate(svc.iterrows()):
+            color = colors[i % len(colors)]
+            pc = round(r["Qty"] / n_in * 100) if n_in else 0
+            legend += (
+                f'<div style="display:flex;align-items:center;justify-content:space-between;'
+                f'padding:5px 0;border-bottom:1px solid {TB};">'
+                f'<div style="display:flex;align-items:center;gap:8px;">'
+                f'<div style="width:9px;height:9px;border-radius:50%;background:{color};flex-shrink:0;"></div>'
+                f'<span style="color:{T1};font-size:0.8rem;font-weight:500;">{r["Service"]}</span></div>'
+                f'<div style="display:flex;align-items:center;gap:8px;">'
+                f'<span style="color:{T1};font-weight:700;font-size:0.8rem;">{int(r["Qty"])}</span>'
+                f'<span style="color:{T2};font-size:0.74rem;min-width:32px;text-align:right;">{pc}%</span>'
+                f'</div></div>'
+            )
+
+        st.markdown(f"""
+        <div class="sc" style="max-height:{MH}px;overflow-y:auto;">
+            <div class="sh">Service Distribution</div>
+            <div style="display:flex;justify-content:center;margin:2px 0 10px;">{donut}</div>
+            {legend}
+        </div>""", unsafe_allow_html=True)
+    else:
+        st.markdown(f"""
+        <div class="sc"><div class="sh">Service Distribution</div>
+        <p style="color:{T2};font-size:0.82rem;">Data layanan tidak ditemukan.</p></div>""",
+                    unsafe_allow_html=True)
 
 
 # ── Topic Distribution ────────────────────────────────────────────────────────
@@ -715,7 +704,7 @@ with col_d:
         kn_v = row[C_KON]   if (C_KON   and C_KON   in active_df.columns) else '-'
         stt  = row['_status']
         p_rows += f"""<tr>
-            <td style="font-weight:700;color:#EA580C;">{id_v}</td>
+            <td class="idc" style="font-weight:700;color:#EA580C;">{id_v}</td>
             <td style="font-weight:600;">{nm_v}</td>
             <td>{mk_badge(sv_v)}</td>
             <td style="color:{T2};font-size:0.77rem;">{kn_v}</td>
@@ -728,11 +717,11 @@ with col_d:
 
     body = (f"""<table class="ct rt">
                 <colgroup>
-                    <col style="width:11%">
-                    <col style="width:23%">
-                    <col style="width:22%">
+                    <col style="width:9%">
                     <col style="width:24%">
                     <col style="width:20%">
+                    <col style="width:25%">
+                    <col style="width:22%">
                 </colgroup>
                 <thead>
                     <tr>
