@@ -35,7 +35,6 @@ st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-/* Base font — but DON'T override Material icon ligatures (fixes broken eye icon) */
 *:not([class*="material-symbols"]):not([data-testid="stIconMaterial"]) {{
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }}
@@ -60,7 +59,6 @@ span[class*="material-symbols"] {{
     max-width: 1400px !important;
 }}
 
-/* ── LOGIN ─────────────────────────────────────────────────────── */
 [data-testid="InputInstructions"] {{ display: none !important; }}
 
 button[data-testid="stTextInputPasswordToggle"] {{
@@ -118,7 +116,6 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     letter-spacing: 0.02em !important;
 }}
 
-/* ── MODE ICON BUTTONS (☀️/🌙 stacked, se-tinggi bar oranye) ───── */
 .st-key-mode_light button, .st-key-mode_dark button {{
     padding: 4px 0 !important;
     min-height: 0 !important;
@@ -144,7 +141,6 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
     opacity: 0.6 !important;
 }}
 
-/* ── METRIC CARDS (compact, tinggi seragam) ────────────────────── */
 .mc {{
     background: {CARD_BG};
     backdrop-filter: blur(12px);
@@ -193,7 +189,6 @@ div[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {{
 .pf {{ height: 100%; background: #10B981; border-radius: 999px; }}
 .pl {{ color: {T2}; font-size: 0.68rem; font-weight: 600; text-align: center; }}
 
-/* ── SECTION CARDS ─────────────────────────────────────────────── */
 .sc {{
     background: {CARD_BG};
     border: 1px solid {CARD_BD};
@@ -280,7 +275,6 @@ def mk_status(text):
     return f'<span class="stb st-def">{text or "-"}</span>'
 
 
-# ── Auth ──────────────────────────────────────────────────────────────────────
 def check_password():
     def _submit():
         st.session_state["auth_ok"] = (
@@ -325,7 +319,6 @@ if not check_password():
     st.stop()
 
 
-# ── Data ──────────────────────────────────────────────────────────────────────
 def _find_col(df, exact, keyword):
     if exact in df.columns:
         return exact
@@ -387,7 +380,6 @@ except Exception as e:
     st.stop()
 
 
-# ── Client status (from SPS 1) ────────────────────────────────────────────────
 status_ok = bool(C_STATUS and C_STATUS in df_in.columns)
 if status_ok:
     status_series  = df_in[C_STATUS].astype(str).str.strip().str.lower()
@@ -411,7 +403,6 @@ n_pend   = n_ongoing + n_unresponsive
 pct_done = round(n_done / n_in * 100) if n_in else 0
 
 
-# ── Revenue / tax (dari SPS 2) ────────────────────────────────────────────────
 FEE = 50_000
 valuation = df_done[C_NOM].sum() + n_in * FEE
 
@@ -431,7 +422,6 @@ tax_t   = tax_df["Tax"].sum()
 net_t   = tax_df["Net"].sum()
 
 
-# ── Header ────────────────────────────────────────────────────────────────────
 logo_b64  = get_b64("logo gsb.png")
 logo_html = (f'<img src="data:image/png;base64,{logo_b64}" '
              f'style="height:46px;border-radius:50%;margin-right:12px;">'
@@ -487,7 +477,6 @@ with btn_col:
 st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
 
 
-# ── Metric Cards (6, tinggi seragam) ──────────────────────────────────────────
 c1, c2, c3, c4, c5, c6 = st.columns(6)
 
 with c1:
@@ -542,7 +531,6 @@ with c6:
 st.markdown("<div style='margin-top:14px;'></div>", unsafe_allow_html=True)
 
 
-# ── Bottom Section (tinggi seragam) ───────────────────────────────────────────
 MH = 330
 
 CONS_LIST = [
@@ -556,7 +544,6 @@ CONS_LIST = [
 col_a, col_b, col_c, col_d = st.columns([1.1, 1.1, 1.1, 2.2], gap="medium")
 
 
-# ── Consultant Workload (dari SPS 1) ──────────────────────────────────────────
 with col_a:
     cdf = pd.DataFrame({"Consultant": CONS_LIST, "N": 0})
     if C_KON and C_KON in df_in.columns:
@@ -598,7 +585,6 @@ with col_a:
     </div>""", unsafe_allow_html=True)
 
 
-# ── Service Distribution (SVG donut, kartu .sc, tinggi sama) ───────────────────
 with col_b:
     if C_LAYAN and C_LAYAN in df_in.columns and n_in > 0:
         svc = df_in[C_LAYAN].value_counts().reset_index()
@@ -655,7 +641,6 @@ with col_b:
                     unsafe_allow_html=True)
 
 
-# ── Topic Distribution ────────────────────────────────────────────────────────
 with col_c:
     t_rows = ""
     if C_TOPIK and C_TOPIK in df_done.columns:
@@ -688,7 +673,6 @@ with col_c:
     </div>""", unsafe_allow_html=True)
 
 
-# ── Active Clients (ongoing + unresponsive, dari SPS 1) ───────────────────────
 with col_d:
     active_df = df_in[active_mask].copy()
     active_df["_status"] = status_series[active_mask].values
